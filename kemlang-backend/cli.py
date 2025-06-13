@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import sys
 import io
+import os
 
 # KemLang core
 from kemlang.lexer import tokenize
@@ -22,7 +23,6 @@ app.add_middleware(
 
 class CodeInput(BaseModel):
     code: str
-
 
 @app.get("/")
 def root():
@@ -46,3 +46,8 @@ async def run_code(request: CodeInput):
     except Exception as e:
         sys.stdout = old_stdout
         return {"success": False, "error": str(e)}
+
+# ✅ This ensures the backend runs correctly on Render or any server
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("cli:app", host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
