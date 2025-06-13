@@ -58,7 +58,7 @@ export default function App() {
   setOutput("Running code...");
 
   try {
-    const response = await fetch("https://kemlang-backend.onrender.com", {
+    const response = await fetch("https://kemlang-backend.onrender.com/run", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code }),
