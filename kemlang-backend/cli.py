@@ -23,6 +23,11 @@ app.add_middleware(
 class CodeInput(BaseModel):
     code: str
 
+
+@app.get("/")
+def root():
+    return {"message": "KemLang backend is live 🎉"}
+
 @app.post("/run")
 async def run_code(request: CodeInput):
     try:
