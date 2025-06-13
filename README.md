@@ -1,6 +1,6 @@
 # KemLang ✨
 
-**🇮🇳 A Gujarati-Inspired Toy Language with a Smile 😄**
+**A Gujarati-Inspired Toy Language with a Smile 😄**
 
 KemLang makes programming **fun, cultural, and beginner-friendly**. Blending playful Gujarati syntax with modern tools, it's perfect for learners who want to code in a language that feels close to home.
 
