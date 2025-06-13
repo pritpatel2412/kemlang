@@ -1,0 +1,14 @@
+# Ignore the frontend app
+frontend/
+*.log
+
+# Ignore virtual environments or Python cache
+__pycache__/
+*.pyc
+
+# Ignore node_modules
+node_modules/
+
+# Ignore dev configs
+.vscode/
+.env

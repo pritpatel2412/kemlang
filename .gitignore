@@ -1,0 +1,58 @@
+# === Node.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.env
+.env
+.env.*
+
+# === macOS / OS-specific ===
+.DS_Store
+Thumbs.db
+
+# === VSCode ===
+.vscode/
+
+# === Logs ===
+*.log
+logs/
+
+# === Compiled files ===
+*.out
+*.exe
+*.class
+
+# === Frontend Specific ===
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# === Coverage ===
+.coverage
+coverage/
+*.cover
+*.py,cover
+.hypothesis/
+
+# === PyInstaller ===
+build/
+dist/
+*.spec
+
+# === Local env settings ===
+*.local
+*.bak
+
+# === dotenv ===
+.env.local
+.env.production
+.env.development

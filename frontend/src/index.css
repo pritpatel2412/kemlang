@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  html {
+    font-family: system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[#121225] text-white;
+  }
+
+  code {
+    @apply font-mono bg-[#0F0F1A] px-1 py-0.5 rounded text-[#FF5733];
+  }
+
+  /* Custom scrollbar for the entire app */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-[#121225];
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
+  }
+}
+
+/* Monaco editor customizations */
+.monaco-editor .margin {
+  @apply bg-[#1E1E3A];
+}
