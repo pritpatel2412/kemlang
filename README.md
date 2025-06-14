@@ -4,7 +4,7 @@
   <a href="https://kemlang.vercel.app">
     <img src="https://img.shields.io/badge/Website-Live-green?style=for-the-badge&logo=vercel&logoColor=white">
   </a>
-  <a href="https://kemlang.vercel.app/docs">
+  <a href="https://kemlang.vercel.app">
     <img src="https://img.shields.io/badge/Docs-Available-blue?style=for-the-badge&logo=readthedocs&logoColor=white">
   </a>
   <a href="https://github.com/pritpatel2412/kemlang">
