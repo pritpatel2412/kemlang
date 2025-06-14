@@ -2,27 +2,28 @@
 
 <p align="center">
   <a href="https://kemlang.vercel.app">
-    <img src="https://img.shields.io/badge/🌐 Website-Live-green?style=for-the-badge&logo=vercel&logoColor=white">
+    <img src="https://img.shields.io/badge/Website-Live-green?style=for-the-badge&logo=vercel&logoColor=white">
   </a>
   <a href="https://kemlang.vercel.app/docs">
-    <img src="https://img.shields.io/badge/📚 Docs-Available-blue?style=for-the-badge&logo=readthedocs&logoColor=white">
+    <img src="https://img.shields.io/badge/Docs-Available-blue?style=for-the-badge&logo=readthedocs&logoColor=white">
   </a>
   <a href="https://github.com/pritpatel2412/kemlang">
-    <img src="https://img.shields.io/badge/💻 GitHub-Source-black?style=for-the-badge&logo=github&logoColor=white">
+    <img src="https://img.shields.io/badge/GitHub-Source-black?style=for-the-badge&logo=github&logoColor=white">
   </a>
 </p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/kemlang">
-    <img src="https://img.shields.io/badge/📦 NPM-KemLang-red?style=for-the-badge&logo=npm&logoColor=white">
+    <img src="https://img.shields.io/badge/NPM-KemLang-red?style=for-the-badge&logo=npm&logoColor=white">
   </a>
   <a href="https://www.npmjs.com/package/kemlang">
-    <img src="https://img.shields.io/npm/v/kemlang?style=for-the-badge&color=orange&logo=npm">
+    <img src="https://img.shields.io/npm/v/kemlang?style=for-the-badge&color=orange">
   </a>
   <a href="https://www.npmjs.com/package/kemlang">
-    <img src="https://img.shields.io/npm/dt/kemlang?style=for-the-badge&color=purple&logo=npm">
+    <img src="https://img.shields.io/npm/dt/kemlang?style=for-the-badge&color=purple">
   </a>
 </p>
+
 
 
 *A Gujarati-Inspired Toy Programming Language with a Smile 😄*
