@@ -92,7 +92,7 @@ export default function App() {
       {/* Hero */}
       <section className="min-h-screen flex flex-col items-center justify-center text-center px-4 py-16 relative">
         <img
-          src="./2-removebg-preview.png"
+          src="./logo.png"
           alt="KemLang Logo"
           className="w-[450px] sm:w-[550px] mb-6"
         />
