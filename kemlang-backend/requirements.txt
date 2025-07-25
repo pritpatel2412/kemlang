@@ -103,7 +103,7 @@ pytweening==1.2.0
 pytz==2024.2
 pywhatkit==5.4
 qrcode==8.2
-requests==2.32.3
+requests==2.32.4
 rich==13.9.4
 rsa==4.9
 seaborn==0.13.2
