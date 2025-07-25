@@ -26,7 +26,7 @@ et_xmlfile==2.0.0
 fastapi==0.115.12
 filelock==3.18.0
 Flask==3.0.3
-Flask-Cors==5.0.0
+Flask-Cors==6.0.0
 Flask-SQLAlchemy==3.1.1
 flatbuffers==25.1.21
 folium==0.19.4
