@@ -131,7 +131,7 @@ uvicorn==0.34.3
 virtualenv==20.31.2
 webdriver-manager==4.0.2
 websocket-client==1.8.0
-Werkzeug==3.0.4
+Werkzeug==3.0.6
 wheel==0.45.1
 wikipedia==1.4.0
 wrapt==1.17.2
