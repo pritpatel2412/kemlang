@@ -50,7 +50,7 @@ httplib2==0.22.0
 idna==3.10
 instaloader==4.13.1
 itsdangerous==2.2.0
-Jinja2==3.1.4
+Jinja2==3.1.6
 keras==3.8.0
 kiwisolver==1.4.7
 libclang==18.1.1
