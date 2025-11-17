@@ -108,7 +108,7 @@ export default function App() {
             Playground
           </button>
           <a
-            href="https://github.com/pritpatel2412/kemlang"
+            href="https://pritfolio.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white hover:bg-gray-200 text-[#121225] px-8 py-3 rounded-md transition-colors"
@@ -211,7 +211,7 @@ export default function App() {
         </a>
       </p>
       <a
-        href="https://github.com/pritpatel2412/kemlang"
+        href="https://pritfolio.vercel.app/"
         target="_blank"
         rel="noopener noreferrer"
         className="text-gray-400 hover:text-[#FF5733] transition-colors"
