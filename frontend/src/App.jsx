@@ -125,7 +125,7 @@ export default function App() {
         <div className="mt-8 text-sm text-gray-400">
           Made by{" "}
           <a
-            href="https://github.com/pritpatel2412"
+            href="https://pritfolio.vercel.app/"
             className="text-[#FF5733] hover:underline"
             target="_blank"
           >
