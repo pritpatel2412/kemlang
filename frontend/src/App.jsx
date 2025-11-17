@@ -202,7 +202,7 @@ export default function App() {
       <p className="text-center md:text-right">
         © {new Date().getFullYear()} KemLang. Created by{" "}
         <a
-          href="https://github.com/pritpatel2412"
+          href="https://pritfolio.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-[#FF5733] hover:underline"
@@ -211,7 +211,7 @@ export default function App() {
         </a>
       </p>
       <a
-        href="https://pritfolio.vercel.app/"
+        href="https://github.com/pritpatel2412"
         target="_blank"
         rel="noopener noreferrer"
         className="text-gray-400 hover:text-[#FF5733] transition-colors"
