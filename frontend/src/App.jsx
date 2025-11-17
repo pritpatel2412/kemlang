@@ -108,7 +108,7 @@ export default function App() {
             Playground
           </button>
           <a
-            href="https://pritfolio.vercel.app/"
+            href="https://github.com/pritpatel2412"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white hover:bg-gray-200 text-[#121225] px-8 py-3 rounded-md transition-colors"
