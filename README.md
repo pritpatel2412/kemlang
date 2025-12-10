@@ -184,6 +184,6 @@ KemLang is lovingly inspired by:
 
 ---
 
-## 💫 Kem cho? Happy Coding! 🙌
+## 💫 Kem cho? Happy Coding! 🙌 
 
 **Let your code speak your culture** 🧡
