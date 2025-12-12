@@ -1,71 +1,69 @@
 # Contributing to KemLang
 
-🎉 **Kem Cho! Thank you for your interest in contributing to KemLang!**
-
-KemLang is a fun, Gujarati-inspired toy programming language. Whether you're here to fix bugs, add features, improve documentation, or just explore—you're welcome!
-
----
-
-## 🧭 Where to Start
-
-1. **Check Issues**
-
-   * Look for issues labeled `good first issue`, `help wanted`, or `bug`.
-   * If something is unclear or missing, feel free to open a new issue.
-
-2. **Join Discussions**
-
-   * Head over to the [Discussions](https://github.com/pritpatel2412/kemlang/discussions) tab.
-   * Share ideas, give feedback, or ask questions.
-
-3. **Play with KemLang**
-
-   * Try writing your own Gujarati-inspired scripts using `sharu`, `lakho`, `samaapt`.
-   * Report unexpected behavior or suggest new features.
+🎉 **Kem Cho! Thank you for considering a contribution to KemLang.**
+KemLang is a Gujarati-inspired toy programming language built for creativity, fun, and exploration. Whether you're fixing bugs, adding features, improving documentation, or simply experimenting—you’re welcome!
 
 ---
 
-## ⚙️ Local Setup
+## 🧭 Getting Started
 
-To get started locally:
+### 1. Explore Issues
+
+* Browse the issue tracker for labels such as **`good first issue`**, **`help wanted`**, or **`bug`**.
+* If something is unclear or missing, feel free to open a new issue.
+
+### 2. Join the Community
+
+* Visit the **Discussions** tab to share ideas, provide feedback, or ask questions.
+
+### 3. Experiment with KemLang
+
+* Try writing Gujarati-inspired scripts using keywords like `sharu`, `lakho`, and `samaapt`.
+* Report unexpected behavior or suggest enhancements.
+
+---
+
+## ⚙️ Local Development Setup
+
+### Backend (Python)
 
 ```bash
-# Clone the repo
-$ git clone https://github.com/pritpatel2412/kemlang.git
+# Clone the repository
+git clone https://github.com/pritpatel2412/kemlang.git
 
-# Navigate to the backend folder
-$ cd kemlang/kemlang-backend
+# Navigate to the backend
+cd kemlang/kemlang-backend
 
-# (Optional) Set up a virtual environment
-$ python -m venv venv
-$ source venv/bin/activate  # or venv\Scripts\activate on Windows
+# (Optional) Create a virtual environment
+python -m venv venv
+source venv/bin/activate    # or venv\Scripts\activate on Windows
 
 # Install dependencies
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 
 # Run the CLI
-$ python cli.py
+python cli.py
 ```
 
-For the frontend (React):
+### Frontend (React)
 
 ```bash
-# Navigate to the frontend folder
-$ cd ../kemlang-frontend
+# Navigate to the frontend
+cd ../kemlang-frontend
 
 # Install dependencies
-$ npm install
+npm install
 
-# Run the development server
-$ npm run dev
+# Start the development server
+npm run dev
 ```
 
 ---
 
-## 🚀 Submitting a Contribution
+## 🚀 How to Contribute
 
-1. **Fork the Repo**
-2. **Create a Branch**
+1. **Fork the Repository**
+2. **Create a New Branch**
 
    ```bash
    git checkout -b fix/my-cool-fix
@@ -73,34 +71,38 @@ $ npm run dev
 3. **Commit Your Changes**
 
    ```bash
-   git commit -m "fix: fix something awesome"
+   git commit -m "fix: describe your change"
    ```
 4. **Push to Your Fork**
 
    ```bash
    git push origin fix/my-cool-fix
    ```
-5. **Open a Pull Request (PR)**
+5. **Open a Pull Request**
 
 ---
 
-## 🧼 Code Style & Standards
+## 🧼 Code Style & Best Practices
 
-* Use meaningful commit messages.
-* Keep your code readable and documented.
-* Write comments in English or Gujarati (but no swearing 😄).
-* If updating the UI, test it on desktop browsers (laptop view preferred).
+* Use clear and descriptive commit messages.
+* Ensure your code is readable and well-documented.
+* Comments may be written in **English or Gujarati**, as long as they remain professional.
+* For UI changes, test across common desktop browser dimensions.
 
 ---
 
 ## 💬 Need Help?
 
-Open an issue or ping us in discussions. No question is too small or silly. We’re all learning.
+If you need assistance:
+
+* Open an issue, or
+* Start a discussion in the community tab.
+
+No question is too small—we’re all here to learn.
 
 ---
 
 ## 🙌 Thank You!
 
-Your contributions make KemLang better! Whether it’s code, docs, ideas, or feedback—you’re helping build a desi-cool experience for everyone.
-
-Bhau, KemLang ma toh maja avi gayi! 😄
+Your contributions—code, documentation, ideas, or feedback—help strengthen KemLang.
+**Aapna yogdaan thi KemLang ne vadhu majedaar banavva ma madad male chhe!** 😄
