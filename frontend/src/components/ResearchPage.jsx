@@ -41,7 +41,7 @@ export default function ResearchPage() {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
           Academic Research Essay
         </div>
-        <h1 className="text-5xl md:text-6xl font-display font-medium text-ink tracking-display-tight">
+        <h1 className="text-5xl md:text-6xl font-serif-editorial font-medium text-ink tracking-display-tight">
           Philosophy & Academic Origins
         </h1>
         <p className="text-lg text-muted max-w-2xl mx-auto font-body">
@@ -55,7 +55,7 @@ export default function ResearchPage() {
         {/* Left Side: Long-form Editorial Column */}
         <div className="lg:col-span-8 space-y-8 font-body text-body leading-relaxed select-text">
           <section className="space-y-4">
-            <h2 className="text-3xl font-display font-medium text-ink tracking-display-tight">
+            <h2 className="text-3xl font-serif-editorial font-medium text-ink tracking-display-tight">
               1. The Vernacular Programming Movement
             </h2>
             <p className="text-sm">
@@ -69,7 +69,7 @@ export default function ResearchPage() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-3xl font-display font-medium text-ink tracking-display-tight">
+            <h2 className="text-3xl font-serif-editorial font-medium text-ink tracking-display-tight">
               2. Technical Design Principles
             </h2>
             <p className="text-sm">
@@ -96,7 +96,7 @@ export default function ResearchPage() {
               <div className="p-2 rounded-lg bg-canvas border border-hairline text-primary select-none">
                 <GraduationCap size={20} />
               </div>
-              <h3 className="text-2xl font-display font-semibold text-ink tracking-display-tight">
+              <h3 className="text-2xl font-serif-editorial font-semibold text-ink tracking-display-tight">
                 Academic Context
               </h3>
             </div>
@@ -146,7 +146,7 @@ export default function ResearchPage() {
       {/* Timeline Section */}
       <div className="space-y-8">
         <div className="space-y-2">
-          <h3 className="text-3xl font-display font-medium text-ink tracking-display-tight">
+          <h3 className="text-3xl font-serif-editorial font-medium text-ink tracking-display-tight">
             Iterative Internship Timeline
           </h3>
           <p className="text-sm text-muted font-body">

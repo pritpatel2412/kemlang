@@ -26,7 +26,7 @@ export default function VSCodePage() {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
           IDE Integrations
         </div>
-        <h1 className="text-5xl md:text-6xl font-display font-medium text-ink tracking-display-tight">
+        <h1 className="text-5xl md:text-6xl font-serif-editorial font-medium text-ink tracking-display-tight">
           KemLang VS Code Extension
         </h1>
         <p className="text-lg text-muted max-w-2xl mx-auto font-body">
@@ -82,7 +82,7 @@ export default function VSCodePage() {
 
         {/* Right Side: Description */}
         <div className="lg:col-span-5 space-y-6">
-          <h3 className="text-3xl font-display font-medium text-ink tracking-display-tight">
+          <h3 className="text-3xl font-serif-editorial font-medium text-ink tracking-display-tight">
             Designed for cultural coders
           </h3>
           <p className="text-sm text-body leading-relaxed font-body">
@@ -130,7 +130,7 @@ export default function VSCodePage() {
               <div className="p-2 w-fit rounded-lg bg-surface-card text-primary border border-hairline select-none">
                 <Icon size={18} />
               </div>
-              <h4 className="text-xl font-display font-semibold text-ink tracking-display-tight">
+              <h4 className="text-xl font-serif-editorial font-semibold text-ink tracking-display-tight">
                 {feat.title}
               </h4>
               <p className="text-xs text-body leading-relaxed font-body">
@@ -144,7 +144,7 @@ export default function VSCodePage() {
       {/* Pre-footer installation invite */}
       <div className="p-8 rounded-lg bg-surface-card border border-hairline flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
         <div className="space-y-2">
-          <h4 className="text-2xl font-display font-medium text-ink tracking-display-tight">
+          <h4 className="text-2xl font-serif-editorial font-medium text-ink tracking-display-tight">
             Contribute to the extension
           </h4>
           <p className="text-sm text-body font-body max-w-xl">

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Sparkles, Send, Copy, ArrowRight, Code, HelpCircle } from "lucide-react";
+import { Sparkles, Send, Copy, ArrowRight, Code, HelpCircle, Terminal, HelpCircle as HelpIcon, Play, RefreshCw } from "lucide-react";
 
 export default function KemGPT({ onInjectCode }) {
   const [messages, setMessages] = useState([
@@ -260,121 +260,228 @@ Response Rules:
   }, [messages]);
 
   return (
-    <div className="h-full flex flex-col bg-surface-dark rounded-lg overflow-hidden border border-hairline/10">
-      {/* Header bar */}
-      <div className="px-4 py-3 bg-surface-dark-elevated border-b border-hairline/10 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-primary">
-          <Sparkles size={16} className="animate-pulse" />
-          <h3 className="text-xs font-bold uppercase tracking-wider text-[#faf9f5]">Kem-GPT Coding Companion</h3>
+    <div className="bg-canvas max-w-7xl mx-auto space-y-12 py-8">
+      {/* Header section */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
+          AI Assistant
         </div>
-        <span className="px-1.5 py-0.5 rounded bg-accent-teal/10 text-accent-teal text-[9px] font-bold tracking-wider select-none border border-accent-teal/20 animate-pulse">
-          GROQ LLM ACTIVE
-        </span>
+        <h1 className="text-5xl md:text-6xl font-serif-editorial text-ink tracking-display-tight">
+          KemGPT Coding Companion
+        </h1>
+        <p className="text-lg text-muted max-w-2xl mx-auto font-body">
+          Generate code snippets, review interpreter exceptions, or query syntactic concepts in native Gujarati voices.
+        </p>
+        <div className="w-16 h-0.5 bg-primary/30 mx-auto rounded-full" />
       </div>
 
-      {/* Chat scroll workspace */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar max-h-[380px]">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex flex-col ${
-              msg.sender === "user" ? "items-end" : "items-start"
-            } space-y-1.5`}
-          >
-            {/* Bubble contents */}
-            <div
-              className={`max-w-[90%] rounded-lg p-3 text-xs leading-relaxed ${
-                msg.sender === "user"
-                  ? "bg-primary text-[#faf9f5]"
-                  : "bg-surface-dark-elevated border border-hairline/10 text-[#faf9f5]/90 font-body"
-              }`}
-            >
-              {/* Simple inline markdown text parsing or thinking loader */}
-              <div className="whitespace-pre-line">
-                {msg.isThinking ? (
-                  <div className="flex items-center gap-1.5 py-1 select-none">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                    <span className="ml-1 italic text-muted-soft">Kem-GPT is thinking...</span>
+      {/* Main 2-Column Workspace */}
+      <div className="grid lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Left Column: Spec Sheet & Prompts (4 cols) */}
+        <div className="lg:col-span-4 space-y-6 text-left">
+          {/* Gujarati Grammar Spec Card */}
+          <div className="bg-surface-card border border-hairline p-6 rounded-lg space-y-4 shadow-sm">
+            <div className="flex items-center gap-2.5 pb-2 border-b border-hairline">
+              <div className="p-1.5 rounded bg-canvas border border-hairline text-primary select-none">
+                <Terminal size={16} />
+              </div>
+              <h3 className="text-base font-serif-editorial font-bold text-ink uppercase tracking-tight">Gujarati Grammar Specs</h3>
+            </div>
+            
+            <p className="text-[11px] text-muted leading-relaxed font-body">
+              Reference guide detailing the core vocabulary mapped inside the KemLang interpreter tokenizer engine:
+            </p>
+
+            <div className="space-y-3 font-body text-xs">
+              <div className="flex items-start justify-between border-b border-hairline pb-1.5 last:border-b-0">
+                <span className="font-semibold text-ink">sharu &#123; ... &#125; samaapt</span>
+                <span className="text-[10px] text-muted-soft text-right">Main Boundaries</span>
+              </div>
+              <div className="flex items-start justify-between border-b border-hairline pb-1.5 last:border-b-0">
+                <span className="font-semibold text-ink">do variable = value;</span>
+                <span className="text-[10px] text-muted-soft text-right">Declaration</span>
+              </div>
+              <div className="flex items-start justify-between border-b border-hairline pb-1.5 last:border-b-0">
+                <span className="font-semibold text-ink">lakho("Message");</span>
+                <span className="text-[10px] text-muted-soft text-right">Stdout Output</span>
+              </div>
+              <div className="flex items-start justify-between border-b border-hairline pb-1.5 last:border-b-0">
+                <span className="font-semibold text-ink">jaano variable;</span>
+                <span className="text-[10px] text-muted-soft text-right">Keyboard Stdin</span>
+              </div>
+              <div className="flex items-start justify-between border-b border-hairline pb-1.5 last:border-b-0">
+                <span className="font-semibold text-ink">jo (cond) ... nahitar ...</span>
+                <span className="text-[10px] text-muted-soft text-right">Conditional</span>
+              </div>
+              <div className="flex items-start justify-between border-b border-hairline pb-1.5 last:border-b-0">
+                <span className="font-semibold text-ink">jyaare (cond) ...</span>
+                <span className="text-[10px] text-muted-soft text-right">While Loop</span>
+              </div>
+              <div className="flex items-start justify-between border-b border-hairline pb-1.5 last:border-b-0">
+                <span className="font-semibold text-ink">kharu / khotu</span>
+                <span className="text-[10px] text-muted-soft text-right">True / False</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick-Prompt cards */}
+          <div className="bg-surface-card border border-hairline p-6 rounded-lg space-y-4 shadow-sm">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted font-body">Quick-Ask Presets</h4>
+            <div className="flex flex-col gap-2 font-body">
+              {[
+                { title: "Factorial calculations", prompt: "Explain how to compute Factorial logic" },
+                { title: "Check Even or Odd", prompt: "Write an even or odd checker program" },
+                { title: "Interactive Stdin Input", prompt: "How to use 'jaano' keyword for keyboards input?" },
+                { title: "Modulo workarounds", prompt: "Write code to simulate modulos without '%' operator" }
+              ].map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSend(item.prompt)}
+                  className="p-2.5 bg-canvas hover:bg-surface-soft border border-hairline rounded text-left text-xs font-medium text-body-strong transition-all flex items-center justify-between group cursor-pointer"
+                >
+                  <span>{item.title}</span>
+                  <ArrowRight size={13} className="text-muted-soft group-hover:text-primary transition-transform group-hover:translate-x-0.5" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Centered Editorial Chat feed (8 cols) */}
+        <div className="lg:col-span-8 bg-surface-card border border-hairline rounded-lg shadow-sm overflow-hidden flex flex-col h-[580px] text-left">
+          {/* Header toolbar */}
+          <div className="px-6 py-4 bg-surface-soft border-b border-hairline flex items-center justify-between select-none">
+            <div className="flex items-center gap-2">
+              <Sparkles size={16} className="text-primary animate-pulse" />
+              <span className="text-xs font-extrabold uppercase tracking-wider text-ink font-body">KemGPT Assistant Hub</span>
+            </div>
+            
+            <div className="flex items-center gap-2.5">
+              <span className="px-2 py-0.5 rounded bg-accent-teal/10 text-accent-teal text-[9px] font-extrabold tracking-widest border border-accent-teal/20 animate-pulse">
+                GROQ ONLINE
+              </span>
+              <button 
+                onClick={() => setMessages([{
+                  sender: "assistant",
+                  text: "Kem cho! Thread reset. What are we building next?",
+                  isPromptSuggestions: true
+                }])}
+                className="p-1 hover:bg-surface-cream-strong rounded text-muted hover:text-ink transition-colors cursor-pointer"
+                title="Reset conversation"
+              >
+                <RefreshCw size={12} />
+              </button>
+            </div>
+          </div>
+
+          {/* Conversation view port */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-canvas/30">
+            {messages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`flex flex-col ${
+                  msg.sender === "user" ? "items-end" : "items-start"
+                } space-y-2`}
+              >
+                {/* Bubble framework */}
+                <div
+                  className={`max-w-[85%] rounded-xl p-4 text-sm leading-relaxed shadow-sm font-body ${
+                    msg.sender === "user"
+                      ? "bg-primary text-white"
+                      : "bg-surface-card border border-hairline text-ink"
+                  }`}
+                >
+                  {/* Inline rich text processing */}
+                  <div className="whitespace-pre-line text-[13px] leading-relaxed">
+                    {msg.isThinking ? (
+                      <div className="flex items-center gap-2 py-1 select-none font-semibold text-muted font-sans">
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                        <span className="italic text-muted-soft text-xs">Thinking...</span>
+                      </div>
+                    ) : (
+                      msg.text.split("**").map((chunk, cIdx) => 
+                        cIdx % 2 === 1 ? <strong key={cIdx} className="text-primary font-bold">{chunk}</strong> : chunk
+                      )
+                    )}
                   </div>
-                ) : (
-                  msg.text.split("**").map((chunk, cIdx) => 
-                    cIdx % 2 === 1 ? <strong key={cIdx} className="text-primary font-bold">{chunk}</strong> : chunk
-                  )
+
+                  {/* Render Code snippets internally */}
+                  {msg.code && (
+                    <div className="mt-4 space-y-2.5 select-text font-mono text-xs">
+                      <div className="p-3 bg-surface-dark border border-surface-dark-elevated rounded-lg text-[#faf9f5] overflow-x-auto max-h-[180px] custom-scrollbar text-[11px] leading-relaxed">
+                        {msg.code}
+                      </div>
+                      
+                      <div className="flex gap-2 select-none">
+                        <button
+                          onClick={() => onInjectCode(msg.code)}
+                          className="px-3 py-1.5 bg-accent-teal hover:bg-accent-teal/95 text-white rounded text-[10px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                        >
+                          <Code size={12} />
+                          <span>Inject to Sandbox</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(msg.code);
+                          }}
+                          className="px-2.5 py-1 bg-surface-dark border border-surface-dark-elevated hover:bg-surface-dark-soft rounded text-[10px] text-muted-soft transition-colors cursor-pointer"
+                          title="Copy to clipboard"
+                        >
+                          <Copy size={11} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Inline sugestions block */}
+                {msg.isPromptSuggestions && (
+                  <div className="flex flex-wrap gap-2 pt-2 max-w-[90%] font-body">
+                    {[
+                      "Calculate Factorial",
+                      "Check Even or Odd",
+                      "Explain Loops",
+                      "Variables Declaring",
+                      "Keyboard Inputs"
+                    ].map((sugg) => (
+                      <button
+                        key={sugg}
+                        onClick={() => handleSend(sugg)}
+                        className="px-3 py-1 bg-canvas hover:bg-surface-soft border border-hairline text-[10px] text-muted-soft hover:text-primary rounded-full transition-all cursor-pointer"
+                      >
+                        ✦ {sugg}
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
-
-              {/* Renders code boxes for compiler prompts */}
-              {msg.code && (
-                <div className="mt-3 space-y-2 select-text font-mono text-[11px]">
-                  <div className="p-3 bg-surface-dark border border-hairline/10 rounded-md text-[#faf9f5] overflow-x-auto max-h-[160px] custom-scrollbar">
-                    {msg.code}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => onInjectCode(msg.code)}
-                      className="px-2.5 py-1.5 bg-accent-teal hover:bg-accent-teal/90 text-[#faf9f5] rounded text-[10px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <Code size={12} />
-                      <span>Inject to Sandbox</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(msg.code);
-                      }}
-                      className="px-2 py-1 bg-surface-dark border border-hairline/10 hover:bg-surface-dark-soft rounded text-[10px] text-muted-soft transition-colors cursor-pointer"
-                      title="Copy to clipboard"
-                    >
-                      <Copy size={11} />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Quick action preset suggestion bubbles */}
-            {msg.isPromptSuggestions && (
-              <div className="flex flex-wrap gap-2 pt-1.5 max-w-[95%]">
-                {[
-                  "Calculate Factorial",
-                  "Check Even or Odd",
-                  "Explain Loops",
-                  "Variables Declaring",
-                  "Keyboard Inputs"
-                ].map((sugg) => (
-                  <button
-                    key={sugg}
-                    onClick={() => handleSend(sugg)}
-                    className="px-2.5 py-1 bg-surface-dark border border-hairline/10 hover:border-primary/30 hover:text-primary rounded-full text-[10px] text-muted transition-all text-left cursor-pointer"
-                  >
-                    ✦ {sugg}
-                  </button>
-                ))}
-              </div>
-            )}
+            ))}
+            <div ref={messagesEndRef} />
           </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
 
-      {/* Input panel block */}
-      <div className="p-3 bg-surface-dark-elevated border-t border-hairline/10 flex items-center gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Ask how to write variables, print messages or loops..."
-          className="flex-1 bg-surface-dark text-xs text-[#faf9f5] placeholder-muted-soft rounded border border-hairline/10 px-3 py-2 outline-none focus:border-primary transition-all font-body"
-        />
-        <button
-          onClick={() => handleSend()}
-          className="p-2 bg-primary hover:bg-primary-active text-[#faf9f5] rounded transition-colors cursor-pointer"
-          title="Send query"
-        >
-          <Send size={14} />
-        </button>
+          {/* Prompt Floating box - Styled like Claude.ai's chat input */}
+          <div className="p-4 bg-surface-soft border-t border-hairline flex items-center gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              placeholder="Ask anything about Gujarati coding structures..."
+              className="flex-1 bg-canvas text-xs text-ink placeholder-muted-soft rounded-md border border-hairline px-4 py-3 outline-none focus:border-primary transition-all font-body shadow-inner"
+            />
+            <button
+              onClick={() => handleSend()}
+              className="p-3 bg-primary hover:bg-primary-active text-white rounded-md transition-colors cursor-pointer shadow-sm flex-shrink-0"
+              title="Send to AI"
+            >
+              <Send size={15} />
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   );

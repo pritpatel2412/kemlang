@@ -182,7 +182,6 @@ export default function App() {
             key={tab.id}
             onClick={() => {
               setActiveTab(tab.id);
-              scrollToPlayground();
             }}
             className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
               activeTab === tab.id
@@ -195,201 +194,214 @@ export default function App() {
         ))}
       </div>
 
-      {/* Hero Band - 6-6 Grid Layout */}
-      <section className="bg-canvas border-b border-hairline py-20 px-6 md:px-12 flex flex-col justify-center relative overflow-hidden">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 items-center">
-          
-          {/* Hero Content Left */}
-          <div className="md:col-span-7 flex flex-col items-start text-left">
-            <div className="inline-flex items-center gap-2 bg-surface-soft border border-hairline px-3 py-1 rounded-full text-xs font-medium text-primary mb-6">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-accent-teal animate-pulse" />
-              <span>KemLang v0.4.0 is now live</span>
-            </div>
+      {/* Hero Band - 6-6 Grid Layout (Only on Sandbox/Playground page) */}
+      {activeTab === "playground" && (
+        <section className="bg-canvas border-b border-hairline py-20 px-6 md:px-12 flex flex-col justify-center relative overflow-hidden">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 items-center">
             
-            <h1 className="text-5xl sm:text-6xl font-serif-editorial text-ink mb-6 leading-[1.08] tracking-tight">
-              Write programs, <br />
-              <span className="text-primary italic">Desi style.</span>
-            </h1>
-            
-            <p className="text-base sm:text-lg text-body mb-8 max-w-xl leading-relaxed">
-              Meet the thinking partner you can talk to in local voice. KemLang is a toy educational programming language with custom Gujarati keywords designed to make compiling logic structures delightfully engaging.
-            </p>
-            
-            <div className="flex flex-wrap gap-3 mb-8">
-              <button
-                onClick={() => { setActiveTab("playground"); scrollToPlayground(); }}
-                className="bg-primary hover:bg-primary-active text-white text-sm font-semibold px-6 py-3 rounded-md transition-colors shadow-sm"
-              >
-                Launch Sandbox
-              </button>
-              <button
-                onClick={() => { setActiveTab("kemgpt"); scrollToPlayground(); }}
-                className="bg-canvas hover:bg-surface-soft border border-hairline text-ink text-sm font-semibold px-6 py-3 rounded-md transition-colors"
-              >
-                Ask KemGPT AI
-              </button>
-            </div>
-
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-surface-soft border border-hairline font-mono text-xs text-body-strong">
-              <span className="text-primary">$</span>
-              <span>npm install -g kemlang</span>
-            </div>
-          </div>
-
-          {/* Hero Illustration mockup Right */}
-          <div className="md:col-span-5 w-full">
-            <div className="bg-surface-dark border border-surface-dark-elevated rounded-xl p-5 shadow-2xl flex flex-col font-mono text-xs text-on-dark-soft select-none relative max-w-md mx-auto">
-              <div className="flex items-center justify-between border-b border-surface-dark-elevated pb-3 mb-4">
-                <span className="text-[10px] uppercase tracking-wider text-muted-soft">preview.kem</span>
-                <div className="flex gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-error" />
-                  <div className="w-2 h-2 rounded-full bg-accent-amber" />
-                  <div className="w-2 h-2 rounded-full bg-success" />
-                </div>
+            {/* Hero Content Left */}
+            <div className="md:col-span-7 flex flex-col items-start text-left animate-fadeIn">
+              <div className="inline-flex items-center gap-2 bg-surface-soft border border-hairline px-3 py-1 rounded-full text-xs font-medium text-primary mb-6">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-accent-teal animate-pulse" />
+                <span>KemLang v0.4.0 is now live</span>
               </div>
               
-              <div className="space-y-1.5 leading-relaxed overflow-x-auto whitespace-pre text-left">
-                <div><span className="text-muted-soft">1</span> <span className="text-primary font-bold">sharu</span> &#123;</div>
-                <div><span className="text-muted-soft">2</span>   <span className="text-[#8E8B82] italic">// Declare variables</span></div>
-                <div><span className="text-muted-soft">3</span>   <span className="text-primary">do</span> name = <span className="text-accent-teal">"KemLang"</span>;</div>
-                <div><span className="text-muted-soft">4</span>   <span className="text-primary">do</span> active = <span className="text-accent-amber">kharu</span>;</div>
-                <div><span className="text-muted-soft">5</span> </div>
-                <div><span className="text-muted-soft">6</span>   <span className="text-[#8E8B82] italic">// Condition check</span></div>
-                <div><span className="text-muted-soft">7</span>   <span className="text-primary">jo</span> (active) &#123;</div>
-                <div><span className="text-muted-soft">8</span>     <span className="text-on-dark">lakho</span>(<span className="text-accent-teal">"Kem cho, "</span> + name);</div>
-                <div><span className="text-muted-soft">9</span>   &#125;</div>
-                <div><span className="text-muted-soft">10</span> <span className="text-primary font-bold">&#125; samaapt</span></div>
+              <h1 className="text-5xl sm:text-6xl font-serif-editorial text-ink mb-6 leading-[1.08] tracking-tight">
+                Write programs, <br />
+                <span className="text-primary italic">Desi style.</span>
+              </h1>
+              
+              <p className="text-base sm:text-lg text-body mb-8 max-w-xl leading-relaxed">
+                Meet the thinking partner you can talk to in local voice. KemLang is a toy educational programming language with custom Gujarati keywords designed to make compiling logic structures delightfully engaging.
+              </p>
+              
+              <div className="flex flex-wrap gap-3 mb-8">
+                <button
+                  onClick={() => { setActiveTab("playground"); scrollToPlayground(); }}
+                  className="bg-primary hover:bg-primary-active text-white text-sm font-semibold px-6 py-3 rounded-md transition-colors shadow-sm cursor-pointer"
+                >
+                  Launch Sandbox
+                </button>
+                <button
+                  onClick={() => { setActiveTab("kemgpt"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                  className="bg-canvas hover:bg-surface-soft border border-hairline text-ink text-sm font-semibold px-6 py-3 rounded-md transition-colors cursor-pointer"
+                >
+                  Ask KemGPT AI
+                </button>
               </div>
 
-              {/* absolute overlay badge */}
-              <div className="absolute -bottom-4 -right-4 bg-surface-card border border-hairline text-ink rounded-lg p-3 shadow-lg flex items-center gap-2 select-none">
-                <svg className="w-4 h-4 text-primary animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" />
-                </svg>
-                <div className="text-left">
-                  <p className="text-[10px] font-bold text-ink uppercase tracking-wider">Compiled Output</p>
-                  <p className="text-xs text-muted font-sans font-medium">"Kem cho, KemLang"</p>
-                </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-surface-soft border border-hairline font-mono text-xs text-body-strong">
+                <span className="text-primary">$</span>
+                <span>npm install -g kemlang</span>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Main Tab View Port (Alternates to Soft Surface) */}
-      <section ref={playgroundRef} className="py-16 px-6 bg-surface-soft flex-1">
-        <div className="max-w-7xl mx-auto">
-          
-          {activeTab === "playground" && (
-            <div className="space-y-8 animate-fadeIn">
-              
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-hairline">
-                <div>
-                  <h2 className="text-4xl font-serif-editorial text-ink mb-2">Interactive Sandbox</h2>
-                  <p className="text-muted text-sm">
-                    Execute code, inspect AST parse tokens, and transpile logic trees instantly.
-                  </p>
+            {/* Hero Illustration mockup Right */}
+            <div className="md:col-span-5 w-full">
+              <div className="bg-surface-dark border border-surface-dark-elevated rounded-xl p-5 shadow-2xl flex flex-col font-mono text-xs text-on-dark-soft select-none relative max-w-md mx-auto">
+                <div className="flex items-center justify-between border-b border-surface-dark-elevated pb-3 mb-4">
+                  <span className="text-[10px] uppercase tracking-wider text-muted-soft">preview.kem</span>
+                  <div className="flex gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-error" />
+                    <div className="w-2 h-2 rounded-full bg-accent-amber" />
+                    <div className="w-2 h-2 rounded-full bg-success" />
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    id="run-code-button"
-                    onClick={runCode}
-                    disabled={isLoading}
-                    className="flex items-center gap-2 bg-primary hover:bg-primary-active disabled:bg-primary-disabled text-white px-5 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm select-none"
-                  >
-                    <Play size={15} />
-                    {isLoading ? "Running..." : "Run Code"}
-                  </button>
-                  <button
-                    onClick={clearCode}
-                    className="flex items-center gap-2 bg-canvas hover:bg-surface-soft border border-hairline text-ink px-5 py-2.5 rounded-md text-sm font-semibold transition-colors select-none"
-                  >
-                    <Trash2 size={15} />
-                    Clear
-                  </button>
-                </div>
-              </div>
-
-              {/* Editor + Output Area - Premium alternating cards */}
-              <div className="grid lg:grid-cols-12 gap-8">
                 
-                {/* Code Editor Mockup Card */}
-                <div className="lg:col-span-7 bg-surface-dark border border-surface-dark-elevated rounded-lg shadow-xl overflow-hidden flex flex-col">
-                  <div className="bg-surface-dark-soft px-4 py-3.5 border-b border-surface-dark-elevated flex items-center justify-between select-none">
-                    <span className="text-[10px] font-bold font-mono text-on-dark-soft uppercase tracking-wider">playground.kem</span>
-                    <div className="flex gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-error" />
-                      <div className="w-2 h-2 rounded-full bg-accent-amber" />
-                      <div className="w-2 h-2 rounded-full bg-success" />
-                    </div>
-                  </div>
-                  <div className="h-[450px] sm:h-[500px] bg-surface-dark">
-                    <Editor code={code} onChange={setCode} />
-                  </div>
+                <div className="space-y-1.5 leading-relaxed overflow-x-auto whitespace-pre text-left">
+                  <div><span className="text-muted-soft">1</span> <span className="text-primary font-bold">sharu</span> &#123;</div>
+                  <div><span className="text-muted-soft">2</span>   <span className="text-[#8E8B82] italic">// Declare variables</span></div>
+                  <div><span className="text-muted-soft">3</span>   <span className="text-primary">do</span> name = <span className="text-accent-teal">"KemLang"</span>;</div>
+                  <div><span className="text-muted-soft">4</span>   <span className="text-primary">do</span> active = <span className="text-accent-amber">kharu</span>;</div>
+                  <div><span className="text-muted-soft">5</span> </div>
+                  <div><span className="text-muted-soft">6</span>   <span className="text-[#8E8B82] italic">// Condition check</span></div>
+                  <div><span className="text-muted-soft">7</span>   <span className="text-primary">jo</span> (active) &#123;</div>
+                  <div><span className="text-muted-soft">8</span>     <span className="text-on-dark">lakho</span>(<span className="text-accent-teal">"Kem cho, "</span> + name);</div>
+                  <div><span className="text-muted-soft">9</span>   &#125;</div>
+                  <div><span className="text-muted-soft">10</span> <span className="text-primary font-bold">&#125; samaapt</span></div>
                 </div>
 
-                {/* Console Output Mockup Card */}
-                <div className="lg:col-span-5 flex flex-col gap-6">
-                  <div className="bg-surface-dark border border-surface-dark-elevated rounded-lg shadow-xl overflow-hidden flex flex-col h-full min-h-[300px]">
-                    <div className="bg-surface-dark-soft px-4 py-3.5 border-b border-surface-dark-elevated flex items-center justify-between select-none">
-                      <span className="text-[10px] font-bold font-mono text-on-dark-soft uppercase tracking-wider">compiler_stdout</span>
-                      <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest border border-primary/20">
-                        Live Sandbox
-                      </span>
-                    </div>
-                    <div className="flex-1 flex flex-col justify-between bg-surface-dark">
-                      <ConsoleOutput output={output} error={error} />
-                    </div>
+                {/* absolute overlay badge */}
+                <div className="absolute -bottom-4 -right-4 bg-surface-card border border-hairline text-ink rounded-lg p-3 shadow-lg flex items-center gap-2 select-none">
+                  <svg className="w-4 h-4 text-primary animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" />
+                  </svg>
+                  <div className="text-left">
+                    <p className="text-[10px] font-bold text-ink uppercase tracking-wider">Compiled Output</p>
+                    <p className="text-xs text-muted font-sans font-medium">"Kem cho, KemLang"</p>
                   </div>
-
-                  {/* High-Yield AdSense Unit Banner */}
-                  <AdSenseUnit slot="8074288228358823" />
-                </div>
-              </div>
-
-              {/* AST Visualizer & Transpiler side-by-side hub inside Dark Mockups */}
-              <div className="grid lg:grid-cols-2 gap-8 pt-8 border-t border-hairline">
-                <div className="bg-surface-dark border border-surface-dark-elevated p-6 rounded-lg shadow-xl text-on-dark text-left">
-                  <ASTVisualizer ast={ast} />
-                </div>
-                <div className="bg-surface-dark border border-surface-dark-elevated p-6 rounded-lg shadow-xl text-on-dark text-left">
-                  <Transpiler ast={ast} />
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        </section>
+      )}
 
-          {activeTab === "kemgpt" && (
-            <div className="animate-fadeIn text-left">
+      {/* Main Tab View Port (Alternates based on page type) */}
+      <main className="flex-1">
+        {activeTab === "playground" && (
+          <section ref={playgroundRef} className="py-16 px-6 bg-surface-soft border-b border-hairline">
+            <div className="max-w-7xl mx-auto">
+              <div className="space-y-8 animate-fadeIn">
+                
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-6 border-b border-hairline">
+                  <div>
+                    <h2 className="text-4xl font-serif-editorial text-ink mb-2">Interactive Sandbox</h2>
+                    <p className="text-muted text-sm font-body">
+                      Execute code, inspect AST parse tokens, and transpile logic trees instantly.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      id="run-code-button"
+                      onClick={runCode}
+                      disabled={isLoading}
+                      className="flex items-center gap-2 bg-primary hover:bg-primary-active disabled:bg-primary-disabled text-white px-5 py-2.5 rounded-md text-sm font-semibold transition-colors shadow-sm select-none cursor-pointer"
+                    >
+                      <Play size={15} />
+                      {isLoading ? "Running..." : "Run Code"}
+                    </button>
+                    <button
+                      onClick={clearCode}
+                      className="flex items-center gap-2 bg-canvas hover:bg-surface-soft border border-hairline text-ink px-5 py-2.5 rounded-md text-sm font-semibold transition-colors select-none cursor-pointer"
+                    >
+                      <Trash2 size={15} />
+                      Clear
+                    </button>
+                  </div>
+                </div>
+
+                {/* Editor + Output Area - Premium alternating cards */}
+                <div className="grid lg:grid-cols-12 gap-8">
+                  
+                  {/* Code Editor Mockup Card */}
+                  <div className="lg:col-span-7 bg-surface-dark border border-surface-dark-elevated rounded-lg shadow-xl overflow-hidden flex flex-col">
+                    <div className="bg-surface-dark-soft px-4 py-3.5 border-b border-surface-dark-elevated flex items-center justify-between select-none">
+                      <span className="text-[10px] font-bold font-mono text-on-dark-soft uppercase tracking-wider">playground.kem</span>
+                      <div className="flex gap-1.5">
+                        <div className="w-2 h-2 rounded-full bg-error" />
+                        <div className="w-2 h-2 rounded-full bg-accent-amber" />
+                        <div className="w-2 h-2 rounded-full bg-success" />
+                      </div>
+                    </div>
+                    <div className="h-[450px] sm:h-[500px] bg-surface-dark">
+                      <Editor code={code} onChange={setCode} />
+                    </div>
+                  </div>
+
+                  {/* Console Output Mockup Card */}
+                  <div className="lg:col-span-5 flex flex-col gap-6">
+                    <div className="bg-surface-dark border border-surface-dark-elevated rounded-lg shadow-xl overflow-hidden flex flex-col h-full min-h-[300px]">
+                      <div className="bg-surface-dark-soft px-4 py-3.5 border-b border-surface-dark-elevated flex items-center justify-between select-none">
+                        <span className="text-[10px] font-bold font-mono text-on-dark-soft uppercase tracking-wider">compiler_stdout</span>
+                        <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest border border-primary/20">
+                          Live Sandbox
+                        </span>
+                      </div>
+                      <div className="flex-1 flex flex-col justify-between bg-surface-dark">
+                        <ConsoleOutput output={output} error={error} />
+                      </div>
+                    </div>
+
+                    {/* High-Yield AdSense Unit Banner */}
+                    <AdSenseUnit slot="8074288228358823" />
+                  </div>
+                </div>
+
+                {/* AST Visualizer & Transpiler side-by-side hub inside Dark Mockups */}
+                <div className="grid lg:grid-cols-2 gap-8 pt-8 border-t border-hairline">
+                  <div className="bg-surface-dark border border-surface-dark-elevated p-6 rounded-lg shadow-xl text-on-dark text-left">
+                    <ASTVisualizer ast={ast} />
+                  </div>
+                  <div className="bg-surface-dark border border-surface-dark-elevated p-6 rounded-lg shadow-xl text-on-dark text-left">
+                    <Transpiler ast={ast} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {activeTab === "kemgpt" && (
+          <section className="py-12 px-6 bg-canvas min-h-[70vh]">
+            <div className="max-w-7xl mx-auto animate-fadeIn">
               <KemGPT onInjectCode={handleLoadCode} />
             </div>
-          )}
+          </section>
+        )}
 
-          {activeTab === "vartahub" && (
-            <div className="animate-fadeIn text-left">
+        {activeTab === "vartahub" && (
+          <section className="py-12 px-6 bg-canvas min-h-[70vh]">
+            <div className="max-w-7xl mx-auto animate-fadeIn">
               <VartaHub currentCode={code} onLoadCode={handleLoadCode} />
             </div>
-          )}
+          </section>
+        )}
 
-          {activeTab === "docs" && (
-            <div className="animate-fadeIn text-left">
-              <Documentation />
+        {activeTab === "docs" && (
+          <section className="py-12 px-6 bg-canvas min-h-[70vh]">
+            <div className="max-w-7xl mx-auto animate-fadeIn">
+              <Documentation onLoadCode={handleLoadCode} />
             </div>
-          )}
+          </section>
+        )}
 
-          {activeTab === "vscode" && (
-            <div className="animate-fadeIn text-left">
+        {activeTab === "vscode" && (
+          <section className="py-12 px-6 bg-canvas min-h-[70vh]">
+            <div className="max-w-7xl mx-auto animate-fadeIn">
               <VSCodePage />
             </div>
-          )}
+          </section>
+        )}
 
-          {activeTab === "research" && (
-            <div className="animate-fadeIn text-left">
+        {activeTab === "research" && (
+          <section className="py-12 px-6 bg-canvas min-h-[70vh]">
+            <div className="max-w-7xl mx-auto animate-fadeIn">
               <ResearchPage />
             </div>
-          )}
-        </div>
-      </section>
+          </section>
+        )}
+      </main>
 
       {/* Floating Cookie Consent banner */}
       {showCookieConsent && (

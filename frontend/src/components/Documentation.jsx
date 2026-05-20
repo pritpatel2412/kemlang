@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Copy, Check, BookOpen, Layers, GitFork, RefreshCw, Terminal, Eye } from "lucide-react";
+import { Copy, Check, BookOpen, Play, Code, HelpCircle, FileText, Cpu } from "lucide-react";
 import AdSenseUnit from "./AdSenseUnit";
 
-function CodeBlock({ code }) {
+function CodeBlock({ code, onLoadCode }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -11,98 +11,229 @@ function CodeBlock({ code }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Simple syntax colorizer for Gujarati keywords to look incredibly premium in static cards
+  const highlightCode = (raw) => {
+    const keywords = ["sharu", "samaapt", "do", "jo", "nahitar", "jyaare", "jaano", "lakho", "kharu", "khotu"];
+    return raw.split("\n").map((line, lIdx) => {
+      // Split line into words and preserve spaces/syntax
+      let processed = line;
+      
+      // Match comments
+      if (line.trim().startsWith("//")) {
+        return (
+          <div key={lIdx} className="text-muted-soft italic select-none">
+            <span className="text-muted-soft/40 w-6 inline-block text-right pr-2 text-[10px] font-mono mr-2">{lIdx + 1}</span>
+            {line}
+          </div>
+        );
+      }
+
+      // Highlight keywords
+      keywords.forEach((kw) => {
+        const regex = new RegExp(`\\b${kw}\\b`, "g");
+        if (kw === "sharu" || kw === "samaapt") {
+          processed = processed.replace(regex, `<span class="text-primary font-semibold">${kw}</span>`);
+        } else if (kw === "do" || kw === "jo" || kw === "nahitar" || kw === "jyaare" || kw === "jaano") {
+          processed = processed.replace(regex, `<span class="text-primary">${kw}</span>`);
+        } else if (kw === "lakho") {
+          processed = processed.replace(regex, `<span class="text-accent-teal font-semibold">${kw}</span>`);
+        } else if (kw === "kharu" || kw === "khotu") {
+          processed = processed.replace(regex, `<span class="text-accent-amber">${kw}</span>`);
+        }
+      });
+
+      // Match string literals
+      processed = processed.replace(/"([^"\\]|\\.)*"/g, '<span class="text-accent-teal">$&</span>');
+
+      return (
+        <div key={lIdx} className="leading-relaxed">
+          <span className="text-muted-soft/40 w-6 inline-block text-right pr-2 text-[10px] font-mono select-none mr-2">{lIdx + 1}</span>
+          <span dangerouslySetInnerHTML={{ __html: processed }} />
+        </div>
+      );
+    });
+  };
+
   return (
-    <div className="relative group">
-      <button
-        onClick={handleCopy}
-        className="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white text-xs px-2 py-1 rounded shadow-sm transition-all group-hover:opacity-100 opacity-0"
-      >
-        {copied ? "Copied!" : <Copy size={14} />}
-      </button>
-      <pre className="bg-gradient-to-br from-[#1E1E3A] to-[#15152b] p-5 rounded-lg font-['JetBrains_Mono','Fira_Code','monospace'] text-sm text-white whitespace-pre-wrap border border-gray-700 shadow-md">
-        {code}
-      </pre>
+    <div className="bg-surface-dark border border-surface-dark-elevated rounded-lg shadow-md overflow-hidden flex flex-col font-mono text-xs text-on-dark-soft text-left relative group">
+      {/* File Bar header */}
+      <div className="bg-surface-dark-soft px-4 py-2 border-b border-surface-dark-elevated flex items-center justify-between select-none">
+        <span className="text-[9px] uppercase tracking-widest text-muted-soft font-bold">code snippet</span>
+        <div className="flex gap-1.5">
+          <button
+            onClick={handleCopy}
+            className="text-[10px] text-muted-soft hover:text-on-dark transition-colors flex items-center gap-1 cursor-pointer"
+            title="Copy code"
+          >
+            {copied ? (
+              <span className="text-success flex items-center gap-1"><Check size={11} /> Copied!</span>
+            ) : (
+              <span className="flex items-center gap-1"><Copy size={11} /> Copy</span>
+            )}
+          </button>
+          {onLoadCode && (
+            <button
+              onClick={() => onLoadCode(code)}
+              className="text-[10px] text-accent-teal hover:text-white transition-colors flex items-center gap-1 cursor-pointer ml-3 font-semibold"
+              title="Run code in active sandbox"
+            >
+              <Play size={11} /> Inject
+            </button>
+          )}
+        </div>
+      </div>
+      
+      {/* Code viewport container */}
+      <div className="p-4 overflow-x-auto whitespace-pre font-mono text-[#faf9f5]/90 select-text leading-relaxed max-h-[220px] custom-scrollbar">
+        {highlightCode(code)}
+      </div>
     </div>
   );
 }
 
-export default function Documentation() {
+export default function Documentation({ onLoadCode }) {
+  const categories = [
+    {
+      title: "Language Core",
+      icon: Cpu,
+      desc: "Every KemLang program is structured inside global boundary brackets, initiating logic blocks cleanly.",
+      items: [
+        {
+          name: "Program Boundaries",
+          desc: "Every script must begin with 'sharu' and conclude with 'samaapt', acting as boundary gates.",
+          code: `sharu {\n  // your program starts here\n  lakho("Kem cho, Prit!");\n} samaapt`
+        },
+        {
+          name: "Standard Comments",
+          desc: "Document logic blocks using double slashes. The interpreter tokenizer skips commented lines.",
+          code: `sharu {\n  // This is a single-line comment\n  do gravity = 9;\n} samaapt`
+        }
+      ]
+    },
+    {
+      title: "State & Data Types",
+      icon: Code,
+      desc: "KemLang manages variable definitions dynamically. It supports integers, decimal numbers, string literals, and booleans.",
+      items: [
+        {
+          name: "Declarations (do)",
+          desc: "Declare a new variable in scope using 'do varName = value;'. All statements must terminate with a semicolon.",
+          code: `sharu {\n  do name = "Desi Coder";\n  do attempts = 3;\n  do passingScore = 75.5;\n} samaapt`
+        },
+        {
+          name: "Booleans",
+          desc: "Evaluate boolean expressions using native words: 'kharu' represents true, and 'khotu' represents false.",
+          code: `sharu {\n  do isVerified = kharu;\n  do hasFailed = khotu;\n} samaapt`
+        }
+      ]
+    },
+    {
+      title: "Control Systems",
+      icon: HelpCircle,
+      desc: "Direct execution logic dynamically using conditionals and looping variables.",
+      items: [
+        {
+          name: "Conditionals (jo-nahitar)",
+          desc: "Branch logic using if-else expressions. Evaluate conditions inside parenthesis: 'jo' (if), 'nahitar' (else).",
+          code: `sharu {\n  do age = 17;\n  jo (age >= 18) {\n    lakho("Eligible for voting.");\n  } nahitar {\n    lakho("Minor user!");\n  }\n} samaapt`
+        },
+        {
+          name: "Loops (jyaare)",
+          desc: "Iterate loops while a condition remains 'kharu'. Re-assignment of variables does NOT use the 'do' prefix.",
+          code: `sharu {\n  do index = 1;\n  jyaare (index <= 4) {\n    lakho("Loop counter: " + index);\n    index = index + 1; // standard assignment\n  }\n} samaapt`
+        }
+      ]
+    },
+    {
+      title: "Stdout & Keyboard Stdin",
+      icon: FileText,
+      desc: "Print values to the developer stdout terminal console, or pause execution to capture keyboard inputs.",
+      items: [
+        {
+          name: "Output Console (lakho)",
+          desc: "Print strings, variables, or expressions to the console terminal. Standard string concatenation is fully supported.",
+          code: `sharu {\n  do tool = "Antigravity";\n  lakho("Powered by: " + tool);\n} samaapt`
+        },
+        {
+          name: "Keyboard Input (jaano)",
+          desc: "Pause the interpreter thread to capture user keyboard input directly from stdin, mapping it to a variable.",
+          code: `sharu {\n  lakho("Enter user age:");\n  do userAge = "";\n  jaano userAge;\n  lakho("User is " + userAge + " years old!");\n} samaapt`
+        }
+      ]
+    }
+  ];
+
   return (
-    <div className="text-white bg-gradient-to-b from-[#0F0F1A] to-[#0A0A14] px-8 py-16 space-y-20">
-      <header className="max-w-5xl mx-auto text-center">
-        <h1 className="text-6xl font-extrabold mb-4 tracking-tight">KemLang</h1>
-        <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-          A Gujarati-flavored programming language that makes coding fun, simple, and culturally connected.
+    <div className="bg-canvas max-w-7xl mx-auto space-y-16 py-8">
+      {/* Header section */}
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
+          Reference Manual
+        </div>
+        <h1 className="text-5xl md:text-6xl font-serif-editorial text-ink tracking-display-tight">
+          Syntax & Language Specification
+        </h1>
+        <p className="text-lg text-muted max-w-2xl mx-auto font-body">
+          Learn how to structure code, declare variables, evaluate conditionals, and write clean loops in KemLang. Click **Inject** on any card to run it in the Sandbox.
         </p>
-      </header>
+        <div className="w-16 h-0.5 bg-primary/30 mx-auto rounded-full" />
+      </div>
 
-      <section className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-        <div>
-          <h2 className="text-2xl font-semibold mb-3">General</h2>
-          <p className="text-gray-400 mb-4">
-            Every KemLang program kicks off with <code className="bg-gray-800 px-1 py-0.5 rounded">sharu</code> and wraps up with <code className="bg-gray-800 px-1 py-0.5 rounded">samaapt</code> — like saying “Kem Cho” at the start and “Aavjo” at the end!
-          </p>
-          <CodeBlock
-            code={`sharu {\n  lakho("Kem cho duniya!");\n} samaapt`}
-          />
-        </div>
+      {/* Spaced Editorial Sections */}
+      <div className="space-y-24">
+        {categories.map((cat, cIdx) => {
+          const Icon = cat.icon;
+          return (
+            <div key={cIdx} className="space-y-8 pb-12 border-b border-hairline last:border-b-0">
+              {/* Category Title & Banner */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 text-left">
+                <div className="p-3 w-fit rounded-lg bg-surface-card border border-hairline text-primary select-none flex-shrink-0">
+                  <Icon size={24} />
+                </div>
+                <div className="space-y-1">
+                  <h2 className="text-3xl font-serif-editorial font-medium text-ink">
+                    {cat.title}
+                  </h2>
+                  <p className="text-sm text-muted max-w-3xl font-body">
+                    {cat.desc}
+                  </p>
+                </div>
+              </div>
 
-        <div>
-          <h2 className="text-2xl font-semibold mb-3">Variables</h2>
-          <p className="text-gray-400 mb-4">
-            In KemLang, variables are declared with <code className="bg-gray-800 px-1 py-0.5 rounded">do</code> — name bolo, value dedo! Supports both numbers and strings, full Bollywood style!
-          </p>
-          <CodeBlock
-            code={`sharu {\n  do a = 10;\n  do b = "kem";\n  a = a + 1;\n} samaapt`}
-          />
-        </div>
-      </section>
+              {/* Sub-item Grid columns */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {cat.items.map((item, itemIdx) => (
+                  <div 
+                    key={itemIdx} 
+                    className="bg-canvas border border-hairline/80 hover:border-hairline p-6 rounded-lg space-y-4 transition-all hover:shadow-sm text-left flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                        <h3 className="text-lg font-serif-editorial font-semibold text-ink">
+                          {item.name}
+                        </h3>
+                      </div>
+                      <p className="text-xs text-body leading-relaxed font-body">
+                        {item.desc}
+                      </p>
+                    </div>
 
-      <section className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-        <div>
-          <h2 className="text-2xl font-semibold mb-3">Types</h2>
-          <p className="text-gray-400 mb-4">
-            Strings, numbers, floats, ya booleans — KemLang sambhale badha type, ekdum desi swag ma!
-          </p>
-          <CodeBlock
-            code={`do name = "KemLang";\ndo age = 20;\ndo rating = 4.5;`}
-          />
-        </div>
+                    <div className="pt-2">
+                      <CodeBlock code={item.code} onLoadCode={onLoadCode} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
-        <div>
-          <h2 className="text-2xl font-semibold mb-3">Booleans</h2>
-          <p className="text-gray-400 mb-4">
-            In KemLang, <code className="bg-gray-800 px-1 py-0.5 rounded">kharu</code> means true and <code className="bg-gray-800 px-1 py-0.5 rounded">khotu</code> means false — simple and desi!
-          </p>
-          <CodeBlock
-            code={`do isHappy = kharu;\njo (isHappy) {\n  lakho("Smile!");\n}`}
-          />
-        </div>
-      </section>
-
-      <section className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-        <div>
-          <h2 className="text-2xl font-semibold mb-3">Conditionals</h2>
-          <p className="text-gray-400 mb-4">
-            Use <code className="bg-gray-800 px-1 py-0.5 rounded">jo</code> for if and <code className="bg-gray-800 px-1 py-0.5 rounded">nahitar</code> for else — KemLang’s way of handling decisions!
-          </p>
-          <CodeBlock
-            code={`do age = 18;\n\njo (age >= 18) {\n  lakho("Adult");\n} nahitar {\n  lakho("Minor");\n}`}
-          />
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold mb-3">Loops</h2>
-          <p className="text-gray-400 mb-4">
-            Use <code className="bg-gray-800 px-1 py-0.5 rounded">jyaare</code> to repeat actions — KemLang’s take on while loops!
-          </p>
-          <CodeBlock
-            code={`do i = 0;\n\njyaare (i < 3) {\n  lakho(i);\n  do i = i + 1;\n}`}
-          />
-        </div>
-      </section>
-
-      <AdSenseUnit slot="8074288228358823" />
+      {/* AdSense Unit placement */}
+      <div className="pt-8">
+        <AdSenseUnit slot="8074288228358823" />
+      </div>
     </div>
   );
 }

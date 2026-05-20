@@ -15,7 +15,7 @@ export default function ASTVisualizer({ ast, activeNodeId }) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center bg-surface-dark-elevated/40 border border-hairline/10 rounded-lg h-full select-none">
         <GitBranch className="w-10 h-10 text-muted-soft mb-3 stroke-[1.5]" />
-        <h4 className="font-display font-medium text-[#faf9f5] text-sm">No Compiled Code</h4>
+        <h4 className="font-serif-editorial font-medium text-[#faf9f5] text-sm">No Compiled Code</h4>
         <p className="text-[11px] text-muted-soft mt-1 max-w-[220px] leading-relaxed">
           Write some code in the editor and click either "Run" or "Debug" to compile and visualize its syntax tree.
         </p>
