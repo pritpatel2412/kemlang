@@ -1,44 +1,64 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   html {
-    font-family: system-ui, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-[#121225] text-white;
+    @apply bg-canvas text-ink antialiased font-sans;
   }
 
   code {
-    @apply font-mono bg-[#0F0F1A] px-1 py-0.5 rounded text-[#FF5733];
+    @apply font-mono bg-surface-soft px-1 py-0.5 rounded text-primary;
   }
 
-  /* Custom scrollbar for the entire app */
+  /* Custom scrollbar matching Claude.com theme */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-[#121225];
+    @apply bg-canvas;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-700 rounded-full;
+    @apply bg-surface-card rounded-full border-2 border-solid border-canvas;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-600;
+    @apply bg-hairline;
+  }
+
+  /* Monaco editor overrides */
+  .monaco-editor {
+    --vscode-editor-background: #181715 !important;
+    --vscode-editorGutter-background: #181715 !important;
   }
 }
 
-/* Monaco editor customizations */
-.monaco-editor .margin {
-  @apply bg-[#1E1E3A];
+/* Custom CSS utilities for Copernicus / Tiempos Headline substitute */
+.font-serif-editorial {
+  font-family: "Cormorant Garamond", Tiempos Headline, Garamond, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.text-gradient-primary {
+  @apply bg-gradient-to-r from-ink to-primary bg-clip-text text-transparent;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

@@ -44,18 +44,18 @@ export default function ConsoleOutput({ output, error }) {
   return (
     <div
       ref={consoleRef}
-      className="font-mono text-sm p-4 bg-[#0f0f18] text-white h-[300px] overflow-y-auto whitespace-pre-wrap rounded-md shadow-inner"
+      className="font-mono text-sm p-4 bg-surface-dark-soft text-on-dark h-[300px] overflow-y-auto whitespace-pre-wrap rounded-md shadow-inner select-text"
     >
       {error ? (
-        <div className="text-red-400 font-semibold">{output || "⚠️ Error occurred."}</div>
+        <div className="text-error font-semibold">{output || "⚠️ Error occurred."}</div>
       ) : (
         <>
           {celebratoryMessage && (
-            <div className="text-pink-300 font-bold mb-2">
+            <div className="text-accent-amber font-bold mb-2">
               {celebratoryMessage}
             </div>
           )}
-          <div className="text-green-400">{output || "✅ Run your code to see output here."}</div>
+          <div className="text-success">{output || "✅ Run your code to see output here."}</div>
         </>
       )}
     </div>
