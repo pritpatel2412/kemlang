@@ -11,6 +11,7 @@ import Transpiler from "./components/Transpiler";
 import VSCodePage from "./components/VSCodePage";
 import ResearchPage from "./components/ResearchPage";
 import AdSenseUnit from "./components/AdSenseUnit";
+import LandingPage from "./components/LandingPage";
 import { Play, Trash2, Github, ChevronDown, Sparkles, BookOpen, Layers, Settings, FileText, Share2 } from "lucide-react";
 
 export default function App() {
@@ -48,7 +49,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [ast, setAst] = useState(null);
-  const [activeTab, setActiveTab] = useState("playground");
+  const [activeTab, setActiveTab] = useState("home");
 
   const playgroundRef = useRef(null);
 
@@ -111,7 +112,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div 
             className="flex items-center gap-2.5 cursor-pointer select-none" 
-            onClick={() => { setActiveTab("playground"); scrollToPlayground(); }}
+            onClick={() => { setActiveTab("home"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
           >
             {/* Anthropic style asterisk-like radial mark */}
             <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
@@ -124,6 +125,7 @@ export default function App() {
 
           <div className="hidden md:flex items-center gap-8">
             {[
+              { id: "home", label: "Home" },
               { id: "playground", label: "Sandbox" },
               { id: "kemgpt", label: "KemGPT AI" },
               { id: "vartahub", label: "VartaHub" },
@@ -171,6 +173,7 @@ export default function App() {
       {/* Mobile Sub-Navigation menu strip */}
       <div className="md:hidden sticky top-[61px] z-40 bg-surface-soft border-b border-hairline overflow-x-auto whitespace-nowrap scrollbar-none flex gap-1 px-4 py-2">
         {[
+          { id: "home", label: "🏠 Home" },
           { id: "playground", label: "💻 Sandbox" },
           { id: "kemgpt", label: "💬 KemGPT" },
           { id: "vartahub", label: "🤝 VartaHub" },
@@ -194,91 +197,28 @@ export default function App() {
         ))}
       </div>
 
-      {/* Hero Band - 6-6 Grid Layout (Only on Sandbox/Playground page) */}
-      {activeTab === "playground" && (
-        <section className="bg-canvas border-b border-hairline py-20 px-6 md:px-12 flex flex-col justify-center relative overflow-hidden">
-          <div className="max-w-7xl mx-auto grid md:grid-cols-12 gap-12 items-center">
-            
-            {/* Hero Content Left */}
-            <div className="md:col-span-7 flex flex-col items-start text-left animate-fadeIn">
-              <div className="inline-flex items-center gap-2 bg-surface-soft border border-hairline px-3 py-1 rounded-full text-xs font-medium text-primary mb-6">
-                <span className="flex h-1.5 w-1.5 rounded-full bg-accent-teal animate-pulse" />
-                <span>KemLang v0.4.0 is now live</span>
-              </div>
-              
-              <h1 className="text-5xl sm:text-6xl font-serif-editorial text-ink mb-6 leading-[1.08] tracking-tight">
-                Write programs, <br />
-                <span className="text-primary italic">Desi style.</span>
-              </h1>
-              
-              <p className="text-base sm:text-lg text-body mb-8 max-w-xl leading-relaxed">
-                Meet the thinking partner you can talk to in local voice. KemLang is a toy educational programming language with custom Gujarati keywords designed to make compiling logic structures delightfully engaging.
-              </p>
-              
-              <div className="flex flex-wrap gap-3 mb-8">
-                <button
-                  onClick={() => { setActiveTab("playground"); scrollToPlayground(); }}
-                  className="bg-primary hover:bg-primary-active text-white text-sm font-semibold px-6 py-3 rounded-md transition-colors shadow-sm cursor-pointer"
-                >
-                  Launch Sandbox
-                </button>
-                <button
-                  onClick={() => { setActiveTab("kemgpt"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                  className="bg-canvas hover:bg-surface-soft border border-hairline text-ink text-sm font-semibold px-6 py-3 rounded-md transition-colors cursor-pointer"
-                >
-                  Ask KemGPT AI
-                </button>
-              </div>
-
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-surface-soft border border-hairline font-mono text-xs text-body-strong">
-                <span className="text-primary">$</span>
-                <span>npm install -g kemlang</span>
-              </div>
-            </div>
-
-            {/* Hero Illustration mockup Right */}
-            <div className="md:col-span-5 w-full">
-              <div className="bg-surface-dark border border-surface-dark-elevated rounded-xl p-5 shadow-2xl flex flex-col font-mono text-xs text-on-dark-soft select-none relative max-w-md mx-auto">
-                <div className="flex items-center justify-between border-b border-surface-dark-elevated pb-3 mb-4">
-                  <span className="text-[10px] uppercase tracking-wider text-muted-soft">preview.kem</span>
-                  <div className="flex gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-error" />
-                    <div className="w-2 h-2 rounded-full bg-accent-amber" />
-                    <div className="w-2 h-2 rounded-full bg-success" />
-                  </div>
-                </div>
-                
-                <div className="space-y-1.5 leading-relaxed overflow-x-auto whitespace-pre text-left">
-                  <div><span className="text-muted-soft">1</span> <span className="text-primary font-bold">sharu</span> &#123;</div>
-                  <div><span className="text-muted-soft">2</span>   <span className="text-[#8E8B82] italic">// Declare variables</span></div>
-                  <div><span className="text-muted-soft">3</span>   <span className="text-primary">do</span> name = <span className="text-accent-teal">"KemLang"</span>;</div>
-                  <div><span className="text-muted-soft">4</span>   <span className="text-primary">do</span> active = <span className="text-accent-amber">kharu</span>;</div>
-                  <div><span className="text-muted-soft">5</span> </div>
-                  <div><span className="text-muted-soft">6</span>   <span className="text-[#8E8B82] italic">// Condition check</span></div>
-                  <div><span className="text-muted-soft">7</span>   <span className="text-primary">jo</span> (active) &#123;</div>
-                  <div><span className="text-muted-soft">8</span>     <span className="text-on-dark">lakho</span>(<span className="text-accent-teal">"Kem cho, "</span> + name);</div>
-                  <div><span className="text-muted-soft">9</span>   &#125;</div>
-                  <div><span className="text-muted-soft">10</span> <span className="text-primary font-bold">&#125; samaapt</span></div>
-                </div>
-
-                {/* absolute overlay badge */}
-                <div className="absolute -bottom-4 -right-4 bg-surface-card border border-hairline text-ink rounded-lg p-3 shadow-lg flex items-center gap-2 select-none">
-                  <svg className="w-4 h-4 text-primary animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" />
-                  </svg>
-                  <div className="text-left">
-                    <p className="text-[10px] font-bold text-ink uppercase tracking-wider">Compiled Output</p>
-                    <p className="text-xs text-muted font-sans font-medium">"Kem cho, KemLang"</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Main Tab View Port (Alternates based on page type) */}
       <main className="flex-1">
+        {activeTab === "home" && (
+          <section className="py-12 px-6 bg-canvas min-h-[70vh]">
+            <div className="max-w-7xl mx-auto animate-fadeIn">
+              <LandingPage 
+                onLaunchSandbox={(customSnippet) => {
+                  if (customSnippet && typeof customSnippet === "string") {
+                    setCode(customSnippet);
+                  }
+                  setActiveTab("playground");
+                  scrollToPlayground();
+                }} 
+                onOpenDocs={() => {
+                  setActiveTab("docs");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }} 
+              />
+            </div>
+          </section>
+        )}
+
         {activeTab === "playground" && (
           <section ref={playgroundRef} className="py-16 px-6 bg-surface-soft border-b border-hairline">
             <div className="max-w-7xl mx-auto">
