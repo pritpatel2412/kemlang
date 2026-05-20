@@ -1,0 +1,112 @@
+{
+  "name": "kemlang-vscode",
+  "displayName": "kemlang-vscode",
+  "description": "VS Code support for .kem files in KemLang",
+  "publisher": "PritPatel",
+  "version": "0.0.2",
+  "icon": "icons/k-icon.png",
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onLanguage:kemlang",
+    "onDebug"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "kemlang",
+        "aliases": ["KemLang", "kemlang"],
+        "extensions": [".kem"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "kemlang-icons",
+        "label": "KemLang Icons",
+        "path": "./file-icons.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "kemlang-vscode.helloWorld",
+        "title": "Hello World"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "kemlang",
+        "scopeName": "source.kemlang",
+        "path": "./syntaxes/kemlang.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "kemlang",
+        "path": "./snippets/kemlang.code-snippets"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "kemlang",
+        "label": "KemLang Debug",
+        "program": "./dist/kemlangDebugAdapter.js",
+        "languages": ["kemlang"],
+        "configurationAttributes": {
+          "launch": {
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Path to .kem file",
+                "default": "${file}"
+              }
+            },
+            "required": ["program"]
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "kemlang",
+            "request": "launch",
+            "name": "Run KemLang File",
+            "program": "${file}"
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pritpatel2412/kemlang"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.101.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "esbuild": "^0.25.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "iconDefinitions": {
+    "kemlang-icon": {
+      "iconPath": "./icons/k-icon.png"
+    }
+  },
+  "fileExtensions": {
+    "kem": "kemlang-icon"
+  },
+  "languageIds": {
+    "kemlang": "kemlang-icon"
+  },
+  "light": {
+    "fileExtensions": {
+      "kem": "kemlang-icon"
+    }
+  },
+  "dark": {
+    "fileExtensions": {
+      "kem": "kemlang-icon"
+    }
+  }
+}

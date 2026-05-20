@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Copy } from "lucide-react";
+import { Copy, Check, BookOpen, Layers, GitFork, RefreshCw, Terminal, Eye } from "lucide-react";
+import AdSenseUnit from "./AdSenseUnit";
 
 function CodeBlock({ code }) {
   const [copied, setCopied] = useState(false);
@@ -101,7 +102,7 @@ export default function Documentation() {
         </div>
       </section>
 
-      
+      <AdSenseUnit slot="8074288228358823" />
     </div>
   );
 }

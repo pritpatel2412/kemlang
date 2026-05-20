@@ -1,0 +1,40 @@
+{
+  "scopeName": "source.kemlang",
+  "name": "KemLang",
+  "fileTypes": ["kem"],
+  "patterns": [
+    {
+      "match": "\\b(sharu|samaapt)\\b",
+      "name": "keyword.block.kemlang"
+    },
+    {
+      "match": "\\blakho\\b",
+      "name": "support.function.print.kemlang"
+    },
+    {
+      "match": "\\bdo\\b",
+      "name": "variable.declaration.kemlang"
+    },
+    {
+      "match": "\\b(jo|nahitar)\\b",
+      "name": "keyword.control.conditional.kemlang"
+    },
+    {
+      "match": "\\bjyaare\\b",
+      "name": "keyword.control.loop.kemlang"
+    },
+    {
+      "match": "\".*?\"",
+      "name": "string.quoted.double.kemlang"
+    },
+    {
+      "match": "\\b[0-9]+\\b",
+      "name": "constant.numeric.kemlang"
+    },
+    {
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+      "name": "variable.other.kemlang"
+    }
+  ],
+  "uuid": "kemlang-syntax-v1"
+}

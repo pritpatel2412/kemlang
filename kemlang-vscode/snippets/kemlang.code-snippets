@@ -1,0 +1,54 @@
+{
+  "Main Block": {
+    "prefix": "sharu",
+    "body": [
+      "sharu {",
+      "\t$0",
+      "} samaapt"
+    ],
+    "description": "KemLang: Start/End Main Block"
+  },
+  "Print Statement": {
+    "prefix": "lakho",
+    "body": [
+      "lakho(\"$1\");"
+    ],
+    "description": "KemLang: Print something to the output"
+  },
+  "Variable Declaration": {
+    "prefix": "do",
+    "body": [
+      "do $1 = $2;"
+    ],
+    "description": "KemLang: Declare a variable"
+  },
+  "If Statement": {
+    "prefix": "jo",
+    "body": [
+      "jo ($1) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "KemLang: If condition"
+  },
+  "If-Else Statement": {
+    "prefix": "joelse",
+    "body": [
+      "jo ($1) {",
+      "\t$2",
+      "} nahitar {",
+      "\t$0",
+      "}"
+    ],
+    "description": "KemLang: If...Else condition"
+  },
+  "While Loop": {
+    "prefix": "jyaare",
+    "body": [
+      "jyaare ($1) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "KemLang: While loop"
+  }
+}
