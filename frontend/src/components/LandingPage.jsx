@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Play, BookOpen, Terminal, Cpu, Globe, FileCode, Check, Sparkles, Layers, ArrowRight } from "lucide-react";
+import { CpuArchitecture } from "./CpuArchitecture";
 
 export default function LandingPage({ onLaunchSandbox, onOpenDocs }) {
   const [activeKeyword, setActiveKeyword] = useState("sharu");
@@ -235,16 +236,40 @@ export default function LandingPage({ onLaunchSandbox, onOpenDocs }) {
 
       {/* 3. The Tech Story (Authentic Compiler Pipeline) */}
       <section className="space-y-12 text-left">
-        <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
-            Engineering Story
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
+              Engineering Story
+            </div>
+            <h2 className="text-4xl md:text-5xl font-serif-editorial text-ink tracking-display-tight">
+              An authentic, robust tree-walking interpreter.
+            </h2>
+            <p className="text-base text-body leading-relaxed font-body">
+              KemLang is **not** a basic string replacement or regular expression transpilation framework. It is a full-fledged language compiler featuring a custom scanner, a rigid recursive parser, and a real-time memory evaluator.
+            </p>
+            <p className="text-sm text-body leading-relaxed font-body">
+              At the core of KemLang lies a virtual execution environment. While the tokenizer outputs structured symbols and the parser maps syntactic operations, the runtime dynamically evaluates variables, scopes, and flow states through a simulated hardware register logic.
+            </p>
           </div>
-          <h2 className="text-4xl md:text-5xl font-serif-editorial text-ink tracking-display-tight">
-            An authentic, robust tree-walking interpreter.
-          </h2>
-          <p className="text-base text-body leading-relaxed font-body">
-            KemLang is **not** a basic string replacement or regular expression transpilation framework. It is a full-fledged language compiler featuring a custom scanner, a rigid recursive parser, and a real-time memory evaluator.
-          </p>
+
+          {/* High-fidelity visual CPU layout showing runtime registers flow */}
+          <div className="lg:col-span-5 w-full">
+            <div className="bg-surface-dark border border-surface-dark-elevated rounded-2xl p-6 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden select-none min-h-[260px]">
+              {/* Ambient overlay */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(204,120,92,0.06),transparent_60%)] pointer-events-none" />
+              <div className="relative w-full aspect-[2/1] flex items-center justify-center">
+                <CpuArchitecture text="KEM-VM" className="w-full h-full" />
+              </div>
+              <div className="mt-4 text-center z-10">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-success/10 text-success border border-success/20 text-[10px] font-mono uppercase font-bold tracking-widest animate-pulse">
+                  Runtime Processor Active
+                </span>
+                <p className="text-[11px] text-on-dark-soft font-mono mt-2">
+                  Tree-walking evaluator routing memory registers along glowing flow lines
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Visual Timeline of Compilation */}
