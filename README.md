@@ -1,62 +1,56 @@
-# 🇮🇳 KemLang ✨
+# KemLang
 
 <p align="center">
   <a href="https://kemlang.vercel.app">
-    <img src="https://img.shields.io/badge/Website-Live-green?style=for-the-badge&logo=vercel&logoColor=white">
+    <img src="https://img.shields.io/badge/Website-Live-brightgreen?style=flat-square&logo=vercel&logoColor=white" alt="Website">
   </a>
-  <a href="https://kemlang.vercel.app">
-    <img src="https://img.shields.io/badge/Docs-Available-blue?style=for-the-badge&logo=readthedocs&logoColor=white">
+  <a href="https://www.npmjs.com/package/kemlang">
+    <img src="https://img.shields.io/npm/v/kemlang?style=flat-square&color=orange" alt="NPM Version">
   </a>
-  <a href="https://github.com/pritpatel2412/kemlang">
-    <img src="https://img.shields.io/badge/GitHub-Source-black?style=for-the-badge&logo=github&logoColor=white">
+  <a href="https://www.npmjs.com/package/kemlang">
+    <img src="https://img.shields.io/npm/dt/kemlang?style=flat-square&color=purple" alt="NPM Downloads">
+  </a>
+  <a href="https://github.com/pritpatel2412/kemlang/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License">
   </a>
 </p>
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/kemlang">
-    <img src="https://img.shields.io/badge/NPM-KemLang-red?style=for-the-badge&logo=npm&logoColor=white">
-  </a>
-  <a href="https://www.npmjs.com/package/kemlang">
-    <img src="https://img.shields.io/npm/v/kemlang?style=for-the-badge&color=orange">
-  </a>
-  <a href="https://www.npmjs.com/package/kemlang">
-    <img src="https://img.shields.io/npm/dt/kemlang?style=for-the-badge&color=purple">
-  </a>
-</p>
+KemLang is an educational, tree-walking interpreted programming language that uses Gujarati as its keyword vocabulary. It is designed to lower the barrier of entry for Gujarati-speaking students and developers who are learning the foundational concepts of computer science — variables, conditionals, loops, and I/O — without requiring fluency in English syntax.
 
-
-
-*A Gujarati-Inspired Toy Programming Language with a Smile 😄*
-
-KemLang makes programming fun, cultural, and beginner-friendly.
-Blending playful Gujarati syntax with modern tools, it's perfect for learners who want to code in a language that feels close to home.
+The project ships as a CLI executable, an NPM package, a browser-based sandbox playground, and a FastAPI-powered remote execution backend.
 
 ---
 
-## 🌟 Features You’ll Love
+## Overview
 
-* ✅ **Gujarati-style syntax** (`sharu`, `samaapt`, `lakho`, etc.)
-* 🧠 **Simple, English-like constructs** to help beginners get started fast
-* 🚀 **Complete interpreter pipeline** (Lexer → Parser → Evaluator)
-* 💻 **CLI support** for executing `.kem` files effortlessly
-* 🌐 **Web API powered by FastAPI** for remote execution
-* 🤪 **Playful Gujarati error messages** for a cultural twist
+Most introductory programming environments assume proficiency in English. This assumption creates a double cognitive burden for learners whose primary language is not English: they must simultaneously acquire programming logic and translate that logic through an unfamiliar linguistic lens.
 
-> 💬 “Kem cho, developer? Let’s make code feel like garba!”
+KemLang addresses this directly. It maps core programming constructs to familiar Gujarati words, allowing learners to focus exclusively on the logical structure of their programs. The interpreter is not a transpiler or a text-substitution layer — it is a full-fledged compiler pipeline composed of a lexical scanner, a recursive-descent parser, and an AST tree-walking evaluator.
 
 ---
 
-## 📦 Installation
+## Features
 
-Get started in seconds with either of these:
+- Gujarati keyword syntax (`sharu`, `samaapt`, `lakho`, `jo`, `nahitar`, `jyaare`, `do`, `jaano`)
+- Full interpreter pipeline: Lexical Analyzer, Recursive-Descent Parser, AST Evaluator
+- CLI support for executing `.kem` source files
+- Browser-based interactive sandbox with Monaco Editor integration
+- FastAPI backend for remote code execution
+- KemGPT: an integrated AI assistant for language guidance and error explanation
+- Gujarati-localized runtime error messages
+- VS Code extension support
 
-### 🧰 Option 1: Install globally
+---
+
+## Installation
+
+**Install globally via NPM:**
 
 ```bash
 npm install -g kemlang
 ```
 
-### ⚡ Option 2: Run instantly with `npx`
+**Run without installing via npx:**
 
 ```bash
 npx kemlang yourfile.kem
@@ -64,126 +58,133 @@ npx kemlang yourfile.kem
 
 ---
 
-## 🎯 Quick Example
+## Quick Start
 
-👩‍💻 Let’s write your first KemLang program!
+Create a file named `hello.kem`:
 
-### 1. Create `hello.kem`
-
-```kemlang
+```
 sharu {
   do naam = "KemLang";
   lakho("Kem cho " + naam);
 } samaapt
 ```
 
-### 2. Run it
+Execute it:
 
 ```bash
 kemlang hello.kem
 ```
 
-### 3. Output
+Expected output:
 
 ```
 Kem cho KemLang
 ```
 
-👏 That’s it! You just coded in KemLang!
+---
+
+## Language Reference
+
+| Concept          | KemLang Syntax              | Description                                      |
+|------------------|-----------------------------|--------------------------------------------------|
+| Program Start    | `sharu {`                   | Opens the top-level program block                |
+| Program End      | `} samaapt`                 | Closes and terminates the program block          |
+| Variable         | `do x = 10;`                | Declares or mutates a variable in the heap       |
+| Print            | `lakho("Hello");`           | Writes a value to standard output                |
+| Input            | `jaano(varName);`           | Reads a value from standard input into a variable|
+| Conditional      | `jo (x > 5) { } nahitar { }`| If / else conditional branching                  |
+| Loop             | `jyaare (x < 5) { }`        | While loop — executes while the condition holds  |
+| Boolean True     | `kharu`                     | Literal true                                     |
+| Boolean False    | `khotu`                     | Literal false                                    |
 
 ---
 
-## 📜 Language Reference
+## Compiler Architecture
 
-| 💬 English      | 💻 KemLang Syntax   |
-| --------------- | ------------------- |
-| Start Block     | `sharu {`           |
-| End Block       | `} samaapt`         |
-| Print Statement | `lakho()`           |
-| Print Example   | `lakho("Hello");`   |
-| Variable        | `do`                |
-| Variable Ex.    | `do x = 10;`        |
-| If / Else       | `jo / nahitar`      |
-| If Example      | `jo (x > 5) {}`     |
-| While Loop      | `jyaare`            |
-| While Example   | `jyaare (x < 5) {}` |
+KemLang processes source code through three sequential phases:
 
-> 📖 **Pro Tip**: It’s not just code. It’s a *varta* (story) your computer understands!
+**Phase 1 — Lexical Analysis**
+
+The scanner reads the source file character by character, classifying sequences into discrete tokens: keywords (`sharu`, `do`, `jo`, etc.), identifiers, numeric literals, string literals, boolean literals, operators, and punctuation. Each token carries its type, value, and source position.
+
+**Phase 2 — Syntactic Parsing**
+
+An LL(1) recursive-descent parser consumes the token stream and constructs an Abstract Syntax Tree (AST). Grammar rules are modelled after Backus-Naur Form (BNF) specifications. The parser enforces structural correctness and emits descriptive error messages when the grammar is violated.
+
+**Phase 3 — AST Evaluation**
+
+The tree-walking evaluator traverses the AST depth-first. It maintains a scoped variable heap, evaluates expressions, resolves identifiers, executes control flow branches, and routes output to stdout. All operations run within a sandboxed execution context.
 
 ---
 
-## 🛠 Development
+## Project Structure
 
-Want to contribute or hack around? Here’s how:
-
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/yourusername/kemlang.git
+```
+kemlang/
+  bin/                  CLI entry point
+  frontend/             Vite + React browser playground
+    src/
+      components/       UI components (LandingPage, KemGPT, Sandbox, etc.)
+      compiler/         Client-side interpreter modules
+  kemlang-backend/      FastAPI Python backend for remote execution
+  kemlang-vscode/       VS Code language extension
+  package.json          Root NPM workspace configuration
 ```
 
-### 2. Install dependencies
+---
+
+## Local Development
+
+**Clone the repository:**
+
+```bash
+git clone https://github.com/pritpatel2412/kemlang.git
+cd kemlang
+```
+
+**Install root dependencies:**
 
 ```bash
 npm install
 ```
 
-### 3. Run the test suite
+**Start the frontend development server:**
+
+```bash
+cd frontend
+npm run dev
+```
+
+The frontend will be available at `http://localhost:5173`.
+
+**Start the backend execution server:**
+
+```bash
+cd kemlang-backend
+pip install fastapi uvicorn
+uvicorn cli:app --reload
+```
+
+The API will be available at `http://localhost:8000`.
+
+---
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request. All submissions are expected to follow the project's code style and pass the existing test suite.
 
 ```bash
 npm test
 ```
 
-### 4. Run locally in VS Code
+---
 
-**Frontend**
+## License
 
-* Open the terminal in VS Code (`Ctrl + ~` or `Cmd + ~`).
-* Navigate to the frontend directory (e.g., `cd frontend` if applicable).
-* Run the frontend development server:
-
-```bash
-npm run dev
-```
-
-* Open your browser and go to the URL displayed in the terminal (usually `http://localhost:3000`).
-
-**Backend**
-
-* Open a new terminal in VS Code.
-* Navigate to the backend directory (e.g., `cd backend` if applicable).
-* Ensure you have Python and FastAPI installed. If not, install dependencies:
-
-```bash
-pip install fastapi uvicorn
-```
-
-* Run the backend server with auto-reload:
-
-```bash
-uvicorn cli:app --reload
-```
-
-* The API will be available at `http://localhost:8000` (or the port specified in your configuration).
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for full terms.
 
 ---
 
-## 📄 License
+## Acknowledgements
 
-This project is licensed under the **MIT License**. See `LICENSE` for full details.
-
----
-
-## 🙏 Credits
-
-KemLang is lovingly inspired by:
-
-* 🧑‍🤝‍🧑 BhaiLang
-* 🌍 The Vernacular Programming Movement
-* ⚓️ Gujarati Culture & Language
-
----
-
-## 💫 Kem cho? Happy Coding! 🙌 
-
-**Let your code speak your culture** 🧡
+KemLang draws conceptual inspiration from the vernacular programming movement and projects such as BhaiLang. The Gujarati language, with its rich literary tradition and global speaker community of over 60 million people, provided both the vocabulary and the cultural motivation for this project.
