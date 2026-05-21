@@ -35,8 +35,11 @@ Blending playful Gujarati syntax with modern tools, it's perfect for learners wh
 
 ## 🌟 Features You’ll Love
 
-* ✅ **Gujarati-style syntax** (`sharu`, `samaapt`, `lakho`, etc.)
-* 🧠 **Simple, English-like constructs** to help beginners get started fast
+* ✅ **Gujarati-style syntax** (`sharu`, `samaapt`, `lakho`, `jo`, `nahitar`, `jyaare`, `do`, `jaano`, `kaam`, `aap`, `ane`, `athva`, `hisaab`, `khaali`, `has`, `value`, `pedhi`, `bhadu`)
+* 💰 **Chokha Hisaab (Immutable Ledgers)**: Secure append-only transactional ledgers with audit history (`hisaab`, `.jama()`, `.udhaar()`, `.itihas()`)
+* 🛡️ **Bina-Bhul (Failure-Proof Null Safety)**: Zero runtime null pointer exceptions via `khaali` literals and safe unboxing under `jo (x has value)` blocks
+* 🏢 **Vyaapaari Concurrency (Pedhi Actors)**: Async message passing and non-blocking contracts (`sauda` and `.melvo()`)
+* 🔑 **Sharafat (Memory Ownership & Borrow Safety)**: Zero-copy safe memory allocations with move-semantics and borrows (`bhadu`)
 * 🚀 **Complete interpreter pipeline** (Lexer → Parser → Evaluator)
 * 💻 **CLI support** for executing `.kem` files effortlessly
 * 🌐 **Web API powered by FastAPI** for remote execution
@@ -107,6 +110,17 @@ Kem cho KemLang
 | If Example      | `jo (x > 5) {}`     |
 | While Loop      | `jyaare`            |
 | While Example   | `jyaare (x < 5) {}` |
+| Ledger Declare  | `hisaab ledger = 1000;` |
+| Credit Ledger   | `ledger.jama(amount);` |
+| Debit Ledger    | `ledger.udhaar(amount);` |
+| Ledger History  | `ledger.itihas(index);` |
+| Null Literal    | `khaali`            |
+| Option Check    | `jo (x has value) {}` |
+| Actor Pedhi Def | `pedhi Dukaan {}`   |
+| Spawn Actor     | `do partner = Dukaan.chalu();` |
+| Async Call      | `partner.sauda("kaam", arg);` |
+| Await Call      | `deal.melvo();`     |
+| Memory Borrow   | `func(bhadu variable);` |
 
 > 📖 **Pro Tip**: It’s not just code. It’s a *varta* (story) your computer understands!
 
