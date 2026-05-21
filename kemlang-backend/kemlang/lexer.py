@@ -24,7 +24,10 @@ class Lexer:
             "kharu": "BOOLEAN",
             "khotu": "BOOLEAN",
             "lakho": "PRINT",
-            "jaano": "INPUT"
+            "jaano": "INPUT",
+            "kaam": "FUNCTION",
+            "ane": "AND",
+            "athva": "OR"
         }
 
     def advance(self):
@@ -94,10 +97,10 @@ class Lexer:
                     op += '='
                     self.advance()
                 tokens.append(Token("OPERATOR", op, start_line))
-            elif self.current_char in "+-*/":
+            elif self.current_char in "+-*/%":
                 tokens.append(Token("OPERATOR", self.current_char, self.line))
                 self.advance()
-            elif self.current_char in "{}();":
+            elif self.current_char in "{}();[],":
                 tokens.append(Token("SYMBOL", self.current_char, self.line))
                 self.advance()
             else:

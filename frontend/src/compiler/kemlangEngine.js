@@ -16,6 +16,42 @@ function uniqueId(prefix = "node") {
 }
 
 // ----------------------------------------------------
+// 0. SCOPED ENVIRONMENT TREE
+// ----------------------------------------------------
+
+export class Environment {
+  constructor(parent = null) {
+    this.records = {};
+    this.parent = parent;
+  }
+
+  define(name, value) {
+    this.records[name] = value;
+  }
+
+  lookup(name) {
+    if (name in this.records) {
+      return this.records[name];
+    }
+    if (this.parent) {
+      return this.parent.lookup(name);
+    }
+    throw new Error(`Undefined variable: ${name}`);
+  }
+
+  assign(name, value) {
+    if (name in this.records) {
+      this.records[name] = value;
+      return value;
+    }
+    if (this.parent) {
+      return this.parent.assign(name, value);
+    }
+    throw new Error(`Undefined variable: ${name}`);
+  }
+}
+
+// ----------------------------------------------------
 // 1. TOKENIZER (LEXER)
 // ----------------------------------------------------
 
@@ -44,7 +80,10 @@ export class Lexer {
       "kharu": "BOOLEAN",
       "khotu": "BOOLEAN",
       "lakho": "PRINT",
-      "jaano": "INPUT"
+      "jaano": "INPUT",
+      "kaam": "FUNCTION",
+      "ane": "AND",
+      "athva": "OR"
     };
   }
 
@@ -131,10 +170,10 @@ export class Lexer {
           this.advance();
         }
         tokens.push(new Token("OPERATOR", op, startLine));
-      } else if ("+-*/".includes(this.current_char)) {
+      } else if ("+-*/%".includes(this.current_char)) {
         tokens.push(new Token("OPERATOR", this.current_char, this.line));
         this.advance();
-      } else if ("{}();".includes(this.current_char)) {
+      } else if ("{}();[],".includes(this.current_char)) {
         tokens.push(new Token("SYMBOL", this.current_char, this.line));
         this.advance();
       } else {
@@ -142,7 +181,7 @@ export class Lexer {
         const pos = this.pos;
         const line = this.line;
         this.advance();
-        throw new Error(`❌ Error: Unknown character '${char}' at position ${pos} (Line ${line})`);
+        throw new Error(`❌ Error: Unknown character '${char}' at position {pos} (Line ${line})`);
       }
     }
     return tokens;
@@ -229,6 +268,10 @@ export class Parser {
         statements.push(this.parseWhile());
       } else if (this.currentToken.type === "INPUT") {
         statements.push(this.parseInput());
+      } else if (this.currentToken.type === "FUNCTION") {
+        statements.push(this.parseFunctionDef());
+      } else if (this.currentToken.type === "RETURN") {
+        statements.push(this.parseReturn());
       } else if (this.currentToken.type === "IDENTIFIER") {
         statements.push(this.parseReassignment());
       } else {
@@ -264,21 +307,33 @@ export class Parser {
 
   parseReassignment() {
     const line = this.currentToken.line;
-    const varName = this.currentToken.value;
-    this.advance();
-    if (this.currentToken === null || this.currentToken.value !== "=") {
-      this.raiseError(`'${varName}' pachi '=' aavvo joie!`);
+    const lhs = this.parseExpression();
+    if (this.currentToken && this.currentToken.value === "=") {
+      this.advance();
+      const rhs = this.parseExpression();
+      this.expectSemicolon();
+      if (lhs.type === "VAR") {
+        return {
+          id: uniqueId("assign"),
+          type: "ASSIGN",
+          varName: lhs.varName,
+          value: rhs,
+          line
+        };
+      } else if (lhs.type === "INDEX") {
+        return {
+          id: uniqueId("index_assign"),
+          type: "INDEX_ASSIGN",
+          target: lhs,
+          value: rhs,
+          line
+        };
+      }
+      this.raiseError("Invalid assignment target!");
+    } else {
+      this.expectSemicolon();
+      return lhs;
     }
-    this.advance();
-    const value = this.parseExpression();
-    this.expectSemicolon();
-    return {
-      id: uniqueId("reassign"),
-      type: "ASSIGN",
-      varName,
-      value,
-      line
-    };
   }
 
   parsePrint() {
@@ -386,8 +441,119 @@ export class Parser {
     }
   }
 
+  parseFunctionDef() {
+    const line = this.currentToken.line;
+    this.advance(); // Skip 'kaam'
+    if (this.currentToken === null || this.currentToken.type !== "IDENTIFIER") {
+      this.raiseError("Function nu naam aavvu joie bro!");
+    }
+    const funcName = this.currentToken.value;
+    this.advance();
+    if (this.currentToken === null || this.currentToken.value !== "(") {
+      this.raiseError("Function name pachi '(' aavvo joie!");
+    }
+    this.advance();
+    const params = [];
+    if (this.currentToken && this.currentToken.value !== ")") {
+      if (this.currentToken.type !== "IDENTIFIER") {
+        this.raiseError("Function parameters ma variable naamo hova joie!");
+      }
+      params.push(this.currentToken.value);
+      this.advance();
+      while (this.currentToken && this.currentToken.value === ",") {
+        this.advance();
+        if (this.currentToken === null || this.currentToken.type !== "IDENTIFIER") {
+          this.raiseError("Function parameters ma variable naamo hova joie!");
+        }
+        params.push(this.currentToken.value);
+        this.advance();
+      }
+    }
+    if (this.currentToken === null || this.currentToken.value !== ")") {
+      this.raiseError("Function parameters pachi ')' aavvo joie!");
+    }
+    this.advance();
+    if (this.currentToken === null || this.currentToken.value !== "{") {
+      this.raiseError("Function body ni sharuaat '{' thi hovi joie!");
+    }
+    this.advance();
+    const body = this.parseBlock();
+    if (this.currentToken === null || this.currentToken.value !== "}") {
+      this.raiseError("Function body bandh karva '}' mukvanu bhooli gaya!");
+    }
+    this.advance();
+    return {
+      id: uniqueId("func_def"),
+      type: "FUNCTION_DEF",
+      funcName,
+      params,
+      body,
+      line
+    };
+  }
+
+  parseReturn() {
+    const line = this.currentToken.line;
+    this.advance(); // Skip 'aap'
+    let value = null;
+    if (this.currentToken && this.currentToken.value !== ";") {
+      value = this.parseExpression();
+    }
+    this.expectSemicolon();
+    return {
+      id: uniqueId("return"),
+      type: "RETURN",
+      value,
+      line
+    };
+  }
+
   parseExpression() {
-    return this.parseComparison();
+    return this.parseLogicalOr();
+  }
+
+  parseLogicalOr() {
+    let left = this.parseLogicalAnd();
+    while (
+      this.currentToken &&
+      this.currentToken.type === "OR"
+    ) {
+      const op = this.currentToken.value;
+      const line = this.currentToken.line;
+      this.advance();
+      const right = this.parseLogicalAnd();
+      left = {
+        id: uniqueId("binop"),
+        type: "BIN_OP",
+        op,
+        left,
+        right,
+        line
+      };
+    }
+    return left;
+  }
+
+  parseLogicalAnd() {
+    let left = this.parseComparison();
+    while (
+      this.currentToken &&
+      this.currentToken.type === "AND"
+    ) {
+      const op = this.currentToken.value;
+      const line = this.currentToken.line;
+      this.advance();
+      const right = this.parseComparison();
+      left = {
+        id: uniqueId("binop"),
+        type: "BIN_OP",
+        op,
+        left,
+        right,
+        line
+      };
+    }
+    return left;
   }
 
   parseComparison() {
@@ -441,7 +607,7 @@ export class Parser {
     while (
       this.currentToken &&
       this.currentToken.type === "OPERATOR" &&
-      ["*", "/"].includes(this.currentToken.value)
+      ["*", "/", "%"].includes(this.currentToken.value)
     ) {
       const op = this.currentToken.value;
       const line = this.currentToken.line;
@@ -464,10 +630,11 @@ export class Parser {
       this.raiseError("Expression adho chhe! Kai to lakh bhai.");
     }
     const tok = this.currentToken;
+    let base;
 
     if (tok.type === "NUMBER") {
       this.advance();
-      return {
+      base = {
         id: uniqueId("literal"),
         type: "LITERAL",
         value: tok.value,
@@ -475,7 +642,7 @@ export class Parser {
       };
     } else if (tok.type === "STRING") {
       this.advance();
-      return {
+      base = {
         id: uniqueId("literal"),
         type: "LITERAL",
         value: tok.value,
@@ -483,7 +650,7 @@ export class Parser {
       };
     } else if (tok.type === "BOOLEAN") {
       this.advance();
-      return {
+      base = {
         id: uniqueId("literal"),
         type: "LITERAL",
         value: tok.value === "kharu",
@@ -491,10 +658,30 @@ export class Parser {
       };
     } else if (tok.type === "IDENTIFIER") {
       this.advance();
-      return {
+      base = {
         id: uniqueId("var"),
         type: "VAR",
         varName: tok.value,
+        line: tok.line
+      };
+    } else if (tok.type === "SYMBOL" && tok.value === "[") {
+      this.advance(); // Skip '['
+      const elements = [];
+      if (this.currentToken && this.currentToken.value !== "]") {
+        elements.push(this.parseExpression());
+        while (this.currentToken && this.currentToken.value === ",") {
+          this.advance();
+          elements.push(this.parseExpression());
+        }
+      }
+      if (this.currentToken === null || this.currentToken.value !== "]") {
+        this.raiseError("Array list bandh karva ']' mukvanu bhooli gaya!");
+      }
+      this.advance(); // Skip ']'
+      base = {
+        id: uniqueId("list"),
+        type: "LIST",
+        elements,
         line: tok.line
       };
     } else if (tok.type === "SYMBOL" && tok.value === "(") {
@@ -504,10 +691,54 @@ export class Parser {
         this.raiseError("Expression pachi ')' mukvanu bhooli gaya!");
       }
       this.advance();
-      return expr;
+      base = expr;
     } else {
       this.raiseError(`Unexpected token in expression: ${tok.type} (${tok.value})`);
     }
+
+    // Now handle trailing function calls or index access
+    while (this.currentToken && (this.currentToken.value === "(" || this.currentToken.value === "[")) {
+      if (this.currentToken.value === "(") {
+        const callLine = this.currentToken.line;
+        this.advance(); // skip '('
+        const args = [];
+        if (this.currentToken && this.currentToken.value !== ")") {
+          args.push(this.parseExpression());
+          while (this.currentToken && this.currentToken.value === ",") {
+            this.advance();
+            args.push(this.parseExpression());
+          }
+        }
+        if (this.currentToken === null || this.currentToken.value !== ")") {
+          this.raiseError("Function call bandh karva ')' mukvanu bhooli gaya!");
+        }
+        this.advance(); // skip ')'
+        base = {
+          id: uniqueId("call"),
+          type: "CALL",
+          callee: base,
+          args,
+          line: callLine
+        };
+      } else if (this.currentToken.value === "[") {
+        const indexLine = this.currentToken.line;
+        this.advance(); // skip '['
+        const indexExpr = this.parseExpression();
+        if (this.currentToken === null || this.currentToken.value !== "]") {
+          this.raiseError("Index bracket bandh karva ']' mukvanu bhooli gaya!");
+        }
+        this.advance(); // skip ']'
+        base = {
+          id: uniqueId("index"),
+          type: "INDEX",
+          base,
+          indexExpr,
+          line: indexLine
+        };
+      }
+    }
+
+    return base;
   }
 }
 
@@ -517,11 +748,96 @@ export class Parser {
 
 export class Evaluator {
   constructor() {
-    this.variables = {};
+    this.globalEnv = new Environment();
+    this.variables = this.globalEnv.records;
   }
 
-  // Evaluates plain expressions synchronously (arithmetic/variables/etc.)
-  evaluateExpr(node) {
+  // Evaluates recursive calls synchronously inside expressions
+  evaluateFunctionSync(func, args) {
+    const params = func.params;
+    const body = func.body;
+    if (args.length !== params.length) {
+      throw new Error(`Function expects ${params.length} arguments, got ${args.length}!`);
+    }
+    const funcEnv = new Environment(func.closure || this.globalEnv);
+    for (let i = 0; i < params.length; i++) {
+      funcEnv.define(params[i], args[i]);
+    }
+
+    // Custom return catcher
+    class ReturnException extends Error {
+      constructor(value) {
+        super("RETURN");
+        this.value = value;
+      }
+    }
+
+    const evalStatement = (stmt, env) => {
+      if (stmt.type === "ASSIGN") {
+        const val = this.evaluateExpr(stmt.value, env);
+        try {
+          env.assign(stmt.varName, val);
+        } catch {
+          env.define(stmt.varName, val);
+        }
+      } else if (stmt.type === "INDEX_ASSIGN") {
+        const arr = this.evaluateExpr(stmt.target.base, env);
+        const idx = this.evaluateExpr(stmt.target.indexExpr, env);
+        const val = this.evaluateExpr(stmt.value, env);
+        if (!Array.isArray(arr)) {
+          throw new Error(`Index assignment is only supported on array lists!`);
+        }
+        if (!Number.isInteger(idx)) {
+          throw new Error(`Array list index must be an integer!`);
+        }
+        arr[idx] = val;
+      } else if (stmt.type === "PRINT") {
+        this.evaluateExpr(stmt.value, env);
+      } else if (stmt.type === "RETURN") {
+        const val = this.evaluateExpr(stmt.value, env);
+        throw new ReturnException(val);
+      } else if (stmt.type === "IF") {
+        const cond = this.evaluateExpr(stmt.condition, env);
+        const block = cond ? stmt.ifBlock : stmt.elseBlock;
+        if (block) {
+          const blockEnv = new Environment(env);
+          for (const s of block) {
+            evalStatement(s, blockEnv);
+          }
+        }
+      } else if (stmt.type === "WHILE") {
+        while (true) {
+          const cond = this.evaluateExpr(stmt.condition, env);
+          if (!cond) break;
+          const blockEnv = new Environment(env);
+          for (const s of stmt.block) {
+            evalStatement(s, blockEnv);
+          }
+        }
+      } else {
+        // standalone expression call
+        this.evaluateExpr(stmt, env);
+      }
+    };
+
+    try {
+      for (const stmt of body) {
+        evalStatement(stmt, funcEnv);
+      }
+    } catch (err) {
+      if (err instanceof ReturnException) {
+        return err.value;
+      }
+      throw err;
+    }
+    return null;
+  }
+
+  // Evaluates plain expressions synchronously
+  evaluateExpr(node, env = null) {
+    if (env === null) {
+      env = this.globalEnv;
+    }
     if (node === null || typeof node !== "object") {
       return node;
     }
@@ -532,17 +848,75 @@ export class Evaluator {
 
     if (node.type === "VAR") {
       const varName = node.varName;
-      if (varName in this.variables) {
-        return this.variables[varName];
+      try {
+        return env.lookup(varName);
+      } catch (err) {
+        throw new Error(`${err.message} (Line ${node.line})`);
       }
-      throw new Error(`Undefined variable: ${varName} (Line ${node.line})`);
+    }
+
+    if (node.type === "LIST") {
+      return node.elements.map(elem => this.evaluateExpr(elem, env));
+    }
+
+    if (node.type === "INDEX") {
+      const base = this.evaluateExpr(node.base, env);
+      const idx = this.evaluateExpr(node.indexExpr, env);
+      if (!Array.isArray(base)) {
+        throw new Error(`Indexing is only supported on array lists! (Line ${node.line})`);
+      }
+      if (!Number.isInteger(idx)) {
+        throw new Error(`Array list index must be an integer! (Line ${node.line})`);
+      }
+      return base[idx];
+    }
+
+    if (node.type === "CALL") {
+      const calleeName = node.callee.type === "VAR" ? node.callee.varName : "";
+      const args = node.args.map(arg => this.evaluateExpr(arg, env));
+
+      if (calleeName === "lambai") {
+        if (args.length !== 1) {
+          throw new Error(`lambai function expects exactly 1 argument! (Line ${node.line})`);
+        }
+        if (!Array.isArray(args[0])) {
+          throw new Error(`lambai function expects an array list! (Line ${node.line})`);
+        }
+        return args[0].length;
+      }
+      if (calleeName === "umedo") {
+        if (args.length !== 2) {
+          throw new Error(`umedo function expects exactly 2 arguments! (Line ${node.line})`);
+        }
+        if (!Array.isArray(args[0])) {
+          throw new Error(`First argument to umedo must be an array list! (Line ${node.line})`);
+        }
+        args[0].push(args[1]);
+        return null;
+      }
+
+      if (!calleeName) {
+        throw new Error(`Invalid function call! (Line ${node.line})`);
+      }
+      const func = env.lookup(calleeName);
+      if (!func || func.type !== "FUNCTION") {
+        throw new Error(`'${calleeName}' is not a callable function! (Line ${node.line})`);
+      }
+
+      return this.evaluateFunctionSync(func, args);
     }
 
     if (node.type === "BIN_OP") {
-      const left = this.evaluateExpr(node.left);
-      const right = this.evaluateExpr(node.right);
+      const left = this.evaluateExpr(node.left, env);
+      const right = this.evaluateExpr(node.right, env);
       const op = node.op;
 
+      if (op === "ane" || op === "AND") {
+        return Boolean(left) && Boolean(right);
+      }
+      if (op === "athva" || op === "OR") {
+        return Boolean(left) || Boolean(right);
+      }
       if (op === "+") {
         if (typeof left === "string" || typeof right === "string") {
           return String(left) + String(right);
@@ -554,6 +928,9 @@ export class Evaluator {
       if (op === "/") {
         if (right === 0) throw new Error(`ZeroDivisionError: Can't divide by zero! (Line ${node.line})`);
         return left / right;
+      }
+      if (op === "%") {
+        return left % right;
       }
       if (op === ">") return left > right;
       if (op === "<") return left < right;
@@ -571,55 +948,84 @@ export class Evaluator {
   /**
    * Generator-based statement evaluator.
    * Yields at each statement pause. The yielder returns:
-   *   { node: ASTNode, variables: Object, type: "STATEMENT" | "INPUT" }
-   * 
-   * If type is "INPUT", the environment must prompt the user and send
-   * the result back to the generator via iterator.next(value).
+   *   { node: ASTNode, variables: Object, type: "STATEMENT" | "INPUT", env: Environment }
    */
-  *evaluate(node) {
+  *evaluate(node, env = null) {
+    if (env === null) {
+      env = this.globalEnv;
+    }
     if (!node) return;
 
     // Array of statements (a block)
     if (Array.isArray(node)) {
+      const blockEnv = new Environment(env);
       for (const stmt of node) {
-        yield* this.evaluate(stmt);
+        yield* this.evaluate(stmt, blockEnv);
       }
       return;
     }
 
     // Yield statement before execution for debugging highlights
-    if (node.type === "ASSIGN" || node.type === "PRINT" || node.type === "INPUT" || node.type === "IF" || node.type === "WHILE") {
+    if (
+      node.type === "ASSIGN" ||
+      node.type === "INDEX_ASSIGN" ||
+      node.type === "PRINT" ||
+      node.type === "INPUT" ||
+      node.type === "IF" ||
+      node.type === "WHILE" ||
+      node.type === "FUNCTION_DEF" ||
+      node.type === "RETURN" ||
+      node.type === "CALL"
+    ) {
       yield {
         node,
-        variables: { ...this.variables },
-        type: "STATEMENT"
+        variables: { ...env.records },
+        type: "STATEMENT",
+        env
       };
     }
 
     // 1. ASSIGNMENT
     if (node.type === "ASSIGN") {
-      const val = this.evaluateExpr(node.value);
-      this.variables[node.varName] = val;
+      const val = this.evaluateExpr(node.value, env);
+      try {
+        env.assign(node.varName, val);
+      } catch {
+        env.define(node.varName, val);
+      }
+      this.variables = this.globalEnv.records;
+    }
+
+    // 1b. INDEX ASSIGNMENT
+    else if (node.type === "INDEX_ASSIGN") {
+      const arr = this.evaluateExpr(node.target.base, env);
+      const idx = this.evaluateExpr(node.target.indexExpr, env);
+      const val = this.evaluateExpr(node.value, env);
+      if (!Array.isArray(arr)) {
+        throw new Error(`Index assignment is only supported on array lists! (Line ${node.line})`);
+      }
+      if (!Number.isInteger(idx)) {
+        throw new Error(`Array list index must be an integer! (Line ${node.line})`);
+      }
+      arr[idx] = val;
     }
 
     // 2. PRINT
     else if (node.type === "PRINT") {
-      const val = this.evaluateExpr(node.value);
-      return val; // Handled by continuous execution runner or debugger stepper to console log
+      const val = this.evaluateExpr(node.value, env);
+      return val;
     }
 
     // 3. INPUT
     else if (node.type === "INPUT") {
-      // Yield an INPUT request. The external stepper must prompt the user
-      // and resume the generator with the input string.
       const rawInput = yield {
         node,
-        variables: { ...this.variables },
+        variables: { ...env.records },
         type: "INPUT",
-        varName: node.varName
+        varName: node.varName,
+        env
       };
 
-      // Try casting to a number if it looks like one, matching Python interpreter
       let processedInput = rawInput;
       if (rawInput !== undefined && rawInput !== null) {
         if (!isNaN(rawInput) && rawInput.trim() !== "") {
@@ -630,34 +1036,61 @@ export class Evaluator {
           processedInput = false;
         }
       }
-      this.variables[node.varName] = processedInput;
+      try {
+        env.assign(node.varName, processedInput);
+      } catch {
+        env.define(node.varName, processedInput);
+      }
+      this.variables = this.globalEnv.records;
     }
 
     // 4. IF CONDITIONAL
     else if (node.type === "IF") {
-      const condVal = this.evaluateExpr(node.condition);
+      const condVal = this.evaluateExpr(node.condition, env);
       if (condVal) {
-        yield* this.evaluate(node.ifBlock);
+        yield* this.evaluate(node.ifBlock, env);
       } else if (node.elseBlock) {
-        yield* this.evaluate(node.elseBlock);
+        yield* this.evaluate(node.elseBlock, env);
       }
     }
 
     // 5. WHILE LOOP
     else if (node.type === "WHILE") {
       while (true) {
-        // Yield loop condition checks to show condition evaluates
         yield {
           node: node.conditionNode,
-          variables: { ...this.variables },
-          type: "STATEMENT"
+          variables: { ...env.records },
+          type: "STATEMENT",
+          env
         };
 
-        const condVal = this.evaluateExpr(node.condition);
+        const condVal = this.evaluateExpr(node.condition, env);
         if (!condVal) break;
 
-        yield* this.evaluate(node.block);
+        yield* this.evaluate(node.block, env);
       }
+    }
+
+    // 6. FUNCTION DEFINITION
+    else if (node.type === "FUNCTION_DEF") {
+      env.define(node.funcName, {
+        type: "FUNCTION",
+        params: node.params,
+        body: node.body,
+        closure: env
+      });
+      this.variables = this.globalEnv.records;
+    }
+
+    // 7. RETURN
+    else if (node.type === "RETURN") {
+      const val = this.evaluateExpr(node.value, env);
+      return val;
+    }
+
+    // 8. STANDALONE EXPRESSION STATEMENT
+    else {
+      this.evaluateExpr(node, env);
     }
   }
 }
@@ -687,13 +1120,11 @@ export function runOffline(code) {
 
       if (step.type === "STATEMENT") {
         if (step.node.type === "PRINT") {
-          const val = evaluator.evaluateExpr(step.node.value);
+          const val = evaluator.evaluateExpr(step.node.value, step.env);
           outputs.push(String(val));
         }
         next = iterator.next();
       } else if (step.type === "INPUT") {
-        // Offline run-to-completion doesn't support interactive pauses,
-        // so we default to standard defaults (0 or empty string)
         next = iterator.next("");
       }
     }

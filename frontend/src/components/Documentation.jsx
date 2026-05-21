@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Check, BookOpen, Play, Code, HelpCircle, FileText, Cpu } from "lucide-react";
+import { Copy, Check, BookOpen, Play, Code, HelpCircle, FileText, Cpu, Layers } from "lucide-react";
 import AdSenseUnit from "./AdSenseUnit";
 
 function CodeBlock({ code, onLoadCode }) {
@@ -13,7 +13,7 @@ function CodeBlock({ code, onLoadCode }) {
 
   // Simple syntax colorizer for Gujarati keywords to look incredibly premium in static cards
   const highlightCode = (raw) => {
-    const keywords = ["sharu", "samaapt", "do", "jo", "nahitar", "jyaare", "jaano", "lakho", "kharu", "khotu"];
+    const keywords = ["sharu", "samaapt", "do", "jo", "nahitar", "jyaare", "jaano", "lakho", "kharu", "khotu", "kaam", "aap", "ane", "athva", "lambai", "umedo"];
     return raw.split("\n").map((line, lIdx) => {
       // Split line into words and preserve spaces/syntax
       let processed = line;
@@ -31,14 +31,16 @@ function CodeBlock({ code, onLoadCode }) {
       // Highlight keywords
       keywords.forEach((kw) => {
         const regex = new RegExp(`\\b${kw}\\b`, "g");
-        if (kw === "sharu" || kw === "samaapt") {
+        if (kw === "sharu" || kw === "samaapt" || kw === "kaam") {
           processed = processed.replace(regex, `<span class="text-primary font-semibold">${kw}</span>`);
         } else if (kw === "do" || kw === "jo" || kw === "nahitar" || kw === "jyaare" || kw === "jaano") {
           processed = processed.replace(regex, `<span class="text-primary">${kw}</span>`);
-        } else if (kw === "lakho") {
+        } else if (kw === "lakho" || kw === "aap" || kw === "lambai" || kw === "umedo") {
           processed = processed.replace(regex, `<span class="text-accent-teal font-semibold">${kw}</span>`);
         } else if (kw === "kharu" || kw === "khotu") {
           processed = processed.replace(regex, `<span class="text-accent-amber">${kw}</span>`);
+        } else if (kw === "ane" || kw === "athva") {
+          processed = processed.replace(regex, `<span class="text-accent-teal">${kw}</span>`);
         }
       });
 
@@ -113,7 +115,7 @@ export default function Documentation({ onLoadCode }) {
     {
       title: "State & Data Types",
       icon: Code,
-      desc: "KemLang manages variable definitions dynamically. It supports integers, decimal numbers, string literals, and booleans.",
+      desc: "KemLang manages variable definitions dynamically. It supports integers, decimal numbers, string literals, booleans, and lists.",
       items: [
         {
           name: "Declarations (do)",
@@ -128,8 +130,59 @@ export default function Documentation({ onLoadCode }) {
       ]
     },
     {
-      title: "Control Systems",
+      title: "Logical & Modulo Operators",
+      icon: Layers,
+      desc: "Perform advanced logic and arithmetic operations using modulo and natural language logical connectors.",
+      items: [
+        {
+          name: "Logical Connectors (ane, athva)",
+          desc: "Evaluate compound boolean expressions. 'ane' evaluates to true only if both expressions are true. 'athva' evaluates to true if at least one is true.",
+          code: `sharu {\n  do age = 20;\n  do isStudent = kharu;\n  jo (age >= 18 ane isStudent) {\n    lakho("Eligible for student discount!");\n  }\n} samaapt`
+        },
+        {
+          name: "Modulo Remainder (%)",
+          desc: "The modulo operator (%) calculates the remainder of a division between two integers.",
+          code: `sharu {\n  do num = 10;\n  do rem = num % 3;\n  lakho("Remainder: " + rem); // Output: 1\n} samaapt`
+        }
+      ]
+    },
+    {
+      title: "Arrays & Collections (yadi)",
       icon: HelpCircle,
+      desc: "Create and mutate sequence lists. Use square brackets to declare arrays, get length with 'lambai', and append with 'umedo'.",
+      items: [
+        {
+          name: "Lists & Index Access",
+          desc: "Declare lists inside bracket syntax. Indexes are 0-indexed. Assign or retrieve elements directly using 'list[index]'.",
+          code: `sharu {\n  do list = [10, 20];\n  list[1] = 50;\n  lakho("Value at index 1: " + list[1]);\n} samaapt`
+        },
+        {
+          name: "List Operations (lambai, umedo)",
+          desc: "Retrieve array size using 'lambai(list)', and append elements dynamically to the end using 'umedo(list, item)'.",
+          code: `sharu {\n  do list = [10, 20];\n  umedo(list, 30);\n  do len = lambai(list);\n  lakho("Array length is " + len); // Output: 3\n} samaapt`
+        }
+      ]
+    },
+    {
+      title: "Custom Functions & Recursion",
+      icon: BookOpen,
+      desc: "Define reusable functions using 'kaam', pass parameters, return values via 'aap', and solve problems recursively.",
+      items: [
+        {
+          name: "Functions (kaam, aap)",
+          desc: "Define functions using 'kaam name(args) { ... }'. Returns values back to caller scopes using 'aap'.",
+          code: `kaam add(a, b) {\n  aap a + b;\n}\n\nsharu {\n  do sum = add(5, 7);\n  lakho("Sum: " + sum);\n} samaapt`
+        },
+        {
+          name: "Recursion & Closures",
+          desc: "Functions can call themselves recursively. Scopes are lexically isolated and support closures.",
+          code: `kaam fact(n) {\n  jo (n <= 1) {\n    aap 1;\n  }\n  aap n * fact(n - 1);\n}\n\nsharu {\n  do res = fact(5);\n  lakho("fact(5) = " + res); // Output: 120\n} samaapt`
+        }
+      ]
+    },
+    {
+      title: "Control Systems",
+      icon: FileText,
       desc: "Direct execution logic dynamically using conditionals and looping variables.",
       items: [
         {
@@ -146,7 +199,7 @@ export default function Documentation({ onLoadCode }) {
     },
     {
       title: "Stdout & Keyboard Stdin",
-      icon: FileText,
+      icon: Cpu,
       desc: "Print values to the developer stdout terminal console, or pause execution to capture keyboard inputs.",
       items: [
         {
@@ -168,13 +221,13 @@ export default function Documentation({ onLoadCode }) {
       {/* Header section */}
       <div className="text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
-          Reference Manual
+          Reference Manual - v2.0.0
         </div>
         <h1 className="text-5xl md:text-6xl font-serif-editorial text-ink tracking-display-tight">
           Syntax & Language Specification
         </h1>
         <p className="text-lg text-muted max-w-2xl mx-auto font-body">
-          Learn how to structure code, declare variables, evaluate conditionals, and write clean loops in KemLang. Click **Inject** on any card to run it in the Sandbox.
+          Learn how to structure code, declare variables, evaluate conditionals, call recursive functions, and manage arrays in KemLang. Click **Inject** on any card to run it in the Sandbox.
         </p>
         <div className="w-16 h-0.5 bg-primary/30 mx-auto rounded-full" />
       </div>

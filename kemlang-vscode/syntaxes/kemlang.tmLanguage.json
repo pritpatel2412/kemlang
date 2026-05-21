@@ -4,16 +4,24 @@
   "fileTypes": ["kem"],
   "patterns": [
     {
+      "match": "//.*$",
+      "name": "comment.line.double-slash.kemlang"
+    },
+    {
       "match": "\\b(sharu|samaapt)\\b",
       "name": "keyword.block.kemlang"
     },
     {
-      "match": "\\blakho\\b",
-      "name": "support.function.print.kemlang"
+      "match": "\\b(lakho|jaano|lambai|umedo)\\b",
+      "name": "support.function.builtin.kemlang"
     },
     {
       "match": "\\bdo\\b",
       "name": "variable.declaration.kemlang"
+    },
+    {
+      "match": "\\bkaam\\b",
+      "name": "storage.type.function.kemlang"
     },
     {
       "match": "\\b(jo|nahitar)\\b",
@@ -22,6 +30,22 @@
     {
       "match": "\\bjyaare\\b",
       "name": "keyword.control.loop.kemlang"
+    },
+    {
+      "match": "\\baap\\b",
+      "name": "keyword.control.return.kemlang"
+    },
+    {
+      "match": "\\b(ane|athva)\\b",
+      "name": "keyword.operator.logical.kemlang"
+    },
+    {
+      "match": "\\b(kharu|khotu)\\b",
+      "name": "constant.language.boolean.kemlang"
+    },
+    {
+      "match": "==|!=|<=|>=|=|<|>|\\+|\\-|\\*|/|%",
+      "name": "keyword.operator.kemlang"
     },
     {
       "match": "\".*?\"",

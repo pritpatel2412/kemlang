@@ -12,3 +12,4 @@ node_modules/
 # Ignore dev configs
 .vscode/
 .env
+kemlang-vscode/

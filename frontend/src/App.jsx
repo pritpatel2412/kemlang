@@ -10,6 +10,7 @@ import ASTVisualizer from "./components/ASTVisualizer";
 import Transpiler from "./components/Transpiler";
 import VSCodePage from "./components/VSCodePage";
 import ResearchPage from "./components/ResearchPage";
+import TimelinePage from "./components/TimelinePage";
 import AdSenseUnit from "./components/AdSenseUnit";
 import LandingPage from "./components/LandingPage";
 import { Play, Trash2, Github, ChevronDown, Sparkles, BookOpen, Layers, Settings, FileText, Share2 } from "lucide-react";
@@ -131,6 +132,7 @@ export default function App() {
               { id: "vartahub", label: "VartaHub" },
               { id: "docs", label: "Documentation" },
               { id: "vscode", label: "VS Code" },
+              { id: "timeline", label: "Timeline & Roadmap" },
               { id: "research", label: "Research" },
             ].map((tab) => (
               <button
@@ -179,6 +181,7 @@ export default function App() {
           { id: "vartahub", label: "🤝 VartaHub" },
           { id: "docs", label: "📄 Docs" },
           { id: "vscode", label: "📦 VS Code" },
+          { id: "timeline", label: "⏳ Timeline" },
           { id: "research", label: "🔬 Research" },
         ].map((tab) => (
           <button
@@ -338,6 +341,14 @@ export default function App() {
           <section className="py-12 px-6 bg-canvas min-h-[70vh]">
             <div className="max-w-7xl mx-auto animate-fadeIn">
               <ResearchPage />
+            </div>
+          </section>
+        )}
+
+        {activeTab === "timeline" && (
+          <section className="py-12 px-6 bg-canvas min-h-[70vh]">
+            <div className="max-w-7xl mx-auto animate-fadeIn">
+              <TimelinePage onLaunchSandbox={handleLoadCode} />
             </div>
           </section>
         )}

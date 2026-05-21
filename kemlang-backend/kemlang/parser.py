@@ -47,6 +47,10 @@ class Parser:
                 statements.append(self.parse_input())
             elif self.current_token.type == "IDENTIFIER":
                 statements.append(self.parse_reassignment())
+            elif self.current_token.type == "FUNCTION":
+                statements.append(self.parse_function_def())
+            elif self.current_token.type == "RETURN":
+                statements.append(self.parse_return())
             else:
                 self.advance()
         return statements
@@ -70,14 +74,20 @@ class Parser:
         return ("ASSIGN", var_name, value)
 
     def parse_reassignment(self):
-        var_name = self.current_token.value
-        self.advance()
-        if self.current_token is None or self.current_token.value != "=":
-            self.raise_error(f"'{var_name}' pachi '=' aavvo joie!")
-        self.advance()
-        value = self.parse_expression()
-        self.expect_semicolon()
-        return ("ASSIGN", var_name, value)
+        lhs = self.parse_expression()
+        if self.current_token and self.current_token.value == "=":
+            self.advance()
+            rhs = self.parse_expression()
+            self.expect_semicolon()
+            if isinstance(lhs, tuple):
+                if lhs[0] == "VAR":
+                    return ("ASSIGN", lhs[1], rhs)
+                elif lhs[0] == "INDEX":
+                    return ("INDEX_ASSIGN", lhs, rhs)
+            self.raise_error("Invalid assignment target!")
+        else:
+            self.expect_semicolon()
+            return lhs
 
     def parse_print(self):
         self.advance()  # Skip 'lakho'
@@ -135,8 +145,67 @@ class Parser:
             self.raise_error("'jyaare' pachi '{' mukvanu joie!")
         return ("WHILE", condition, block)
 
+    def parse_function_def(self):
+        self.advance()  # Skip 'kaam'
+        if self.current_token is None or self.current_token.type != "IDENTIFIER":
+            self.raise_error("'kaam' pachi function nu naam aavvu joie!")
+        func_name = self.current_token.value
+        self.advance()
+        if self.current_token is None or self.current_token.value != "(":
+            self.raise_error("Function name pachi '(' aavvo joie!")
+        self.advance()
+        params = []
+        if self.current_token and self.current_token.value != ")":
+            if self.current_token.type != "IDENTIFIER":
+                self.raise_error("Function parameters ma variable naamo hova joie!")
+            params.append(self.current_token.value)
+            self.advance()
+            while self.current_token and self.current_token.value == ",":
+                self.advance()
+                if self.current_token is None or self.current_token.type != "IDENTIFIER":
+                    self.raise_error("Function parameters ma variable naamo hova joie!")
+                params.append(self.current_token.value)
+                self.advance()
+        if self.current_token is None or self.current_token.value != ")":
+            self.raise_error("Function parameters pachi ')' aavvo joie!")
+        self.advance()
+        if self.current_token is None or self.current_token.value != "{":
+            self.raise_error("Function body ni sharuaat '{' thi hovi joie!")
+        self.advance()
+        body = self.parse_block()
+        if self.current_token is None or self.current_token.value != "}":
+            self.raise_error("Function body bandh karva '}' mukvanu bhooli gaya!")
+        self.advance()
+        return ("FUNCTION_DEF", func_name, params, body)
+
+    def parse_return(self):
+        self.advance()  # Skip 'aap'
+        value = None
+        if self.current_token and self.current_token.value != ";":
+            value = self.parse_expression()
+        self.expect_semicolon()
+        return ("RETURN", value)
+
     def parse_expression(self):
-        return self.parse_comparison()
+        return self.parse_logical_or()
+
+    def parse_logical_or(self):
+        left = self.parse_logical_and()
+        while self.current_token and self.current_token.type == "OR":
+            op = self.current_token.value
+            self.advance()
+            right = self.parse_logical_and()
+            left = ("BIN_OP", op, left, right)
+        return left
+
+    def parse_logical_and(self):
+        left = self.parse_comparison()
+        while self.current_token and self.current_token.type == "AND":
+            op = self.current_token.value
+            self.advance()
+            right = self.parse_comparison()
+            left = ("BIN_OP", op, left, right)
+        return left
 
     def parse_comparison(self):
         left = self.parse_add_sub()
@@ -158,7 +227,7 @@ class Parser:
 
     def parse_mul_div(self):
         left = self.parse_primary()
-        while self.current_token and self.current_token.type == "OPERATOR" and self.current_token.value in ("*", "/"):
+        while self.current_token and self.current_token.type == "OPERATOR" and self.current_token.value in ("*", "/", "%"):
             op = self.current_token.value
             self.advance()
             right = self.parse_primary()
@@ -169,21 +238,64 @@ class Parser:
         if self.current_token is None:
             self.raise_error("Expression adho chhe! Kai to lakh bhai.")
         tok = self.current_token
-        if tok.type in ("NUMBER", "STRING", "BOOLEAN"):
+        
+        if tok.type in ("NUMBER", "STRING"):
             self.advance()
-            return tok.value
+            base = tok.value
+        elif tok.type == "BOOLEAN":
+            self.advance()
+            base = True if tok.value == "kharu" else False
         elif tok.type == "IDENTIFIER":
             self.advance()
-            return ("VAR", tok.value)
+            base = ("VAR", tok.value)
+        elif tok.type == "SYMBOL" and tok.value == "[":
+            self.advance()
+            elements = []
+            if self.current_token and self.current_token.value != "]":
+                elements.append(self.parse_expression())
+                while self.current_token and self.current_token.value == ",":
+                    self.advance()
+                    elements.append(self.parse_expression())
+            if self.current_token is None or self.current_token.value != "]":
+                self.raise_error("Array list bandh karva ']' mukvanu bhooli gaya!")
+            self.advance()
+            base = ("LIST", elements)
         elif tok.type == "SYMBOL" and tok.value == "(":
             self.advance()
             expr = self.parse_expression()
             if self.current_token is None or self.current_token.value != ")":
                 self.raise_error("Expression pachi ')' mukvanu bhooli gaya!")
             self.advance()
-            return expr
+            base = expr
         else:
             self.raise_error(f"Unexpected token in expression: {tok.type} ({tok.value})")
+
+        # Now handle index access or function calls trailing the base
+        while self.current_token and self.current_token.value in ("(", "["):
+            if self.current_token.value == "(":
+                self.advance()  # skip '('
+                args = []
+                if self.current_token and self.current_token.value != ")":
+                    args.append(self.parse_expression())
+                    while self.current_token and self.current_token.value == ",":
+                        self.advance()
+                        args.append(self.parse_expression())
+                if self.current_token is None or self.current_token.value != ")":
+                    self.raise_error("Function call bandh karva ')' mukvanu bhooli gaya!")
+                self.advance()
+                if isinstance(base, tuple) and base[0] == "VAR":
+                    base = ("CALL", base[1], args)
+                else:
+                    base = ("CALL_EXPR", base, args)
+            elif self.current_token.value == "[":
+                self.advance()  # skip '['
+                index_expr = self.parse_expression()
+                if self.current_token is None or self.current_token.value != "]":
+                    self.raise_error("Index bracket bandh karva ']' mukvanu bhooli gaya!")
+                self.advance()
+                base = ("INDEX", base, index_expr)
+
+        return base
 
     def raise_error(self, message):
         funny_prefixes = [

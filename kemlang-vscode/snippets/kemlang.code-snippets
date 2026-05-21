@@ -50,5 +50,42 @@
       "}"
     ],
     "description": "KemLang: While loop"
+  },
+  "Function Declaration": {
+    "prefix": "kaam",
+    "body": [
+      "kaam ${1:funcName}(${2:params}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "KemLang: Declare a function"
+  },
+  "Return Statement": {
+    "prefix": "aap",
+    "body": [
+      "aap $0;"
+    ],
+    "description": "KemLang: Return a value from a function"
+  },
+  "Array Declaration": {
+    "prefix": "yadi",
+    "body": [
+      "do ${1:listName} = [$0];"
+    ],
+    "description": "KemLang: Declare an array list (yadi)"
+  },
+  "Append to Array": {
+    "prefix": "umedo",
+    "body": [
+      "umedo(${1:listName}, ${2:value});"
+    ],
+    "description": "KemLang: Append a value to an array list"
+  },
+  "Array Length": {
+    "prefix": "lambai",
+    "body": [
+      "lambai(${1:listName})"
+    ],
+    "description": "KemLang: Get the length of an array list"
   }
 }

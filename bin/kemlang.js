@@ -4,8 +4,8 @@ const { spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
-// Get path to cli.py in the kemlang-backend folder
-const backendPath = path.join(__dirname, "..", "kemlang-backend", "cli.py");
+// Get path to kemlang.py in the kemlang-backend/kemlang folder
+const backendPath = path.join(__dirname, "..", "kemlang-backend", "kemlang", "kemlang.py");
 
 // Get user-provided arguments (i.e., the .kem file)
 const args = process.argv.slice(2);
