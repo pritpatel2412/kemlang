@@ -25,8 +25,8 @@ export default function TimelinePage({ onLaunchSandbox }) {
     },
     {
       title: "v2.0.0 - Advanced Functional & Array Paradigms",
-      date: "Current Release (Active)",
-      status: "active",
+      date: "Completed Milestone",
+      status: "completed",
       icon: Sparkles,
       color: "border-accent-teal text-accent-teal bg-accent-teal/5",
       badgeColor: "bg-accent-teal/10 text-accent-teal border-accent-teal/20",
@@ -42,30 +42,65 @@ export default function TimelinePage({ onLaunchSandbox }) {
         "Remainder calculations via arithmetic modulo operator (%)",
         "Boolean operators 'ane' (AND) and 'athva' (OR) with mathematical precedence",
         "Enhanced VS Code extension with rich TextMate grammars and snippets"
-      ],
-      sampleCode: `sharu {
-  // Test our recursion and array updates in v2.0.0!
-  kaam fact(n) {
-    jo (n <= 1) {
-      aap 1;
-    }
-    aap n * fact(n - 1);
-  }
-
-  do list = [10, 20];
-  umedo(list, fact(4)); // appends 24
-  
-  lakho("List len: " + lambai(list)); // Output: 3
-  lakho("Last element: " + list[2]);   // Output: 24
-} samaapt`
+      ]
     },
     {
-      title: "v3.0.0 - Standard Libraries & Native Modules",
-      date: "Q3 2026",
-      status: "future",
+      title: "v3.0.0 - Advanced Out-of-the-Box System Paradigms",
+      date: "Current Release (Active)",
+      status: "active",
       icon: Layers,
       color: "border-accent-amber text-accent-amber bg-accent-amber/5",
       badgeColor: "bg-accent-amber/10 text-accent-amber border-accent-amber/20",
+      description: "A cutting-edge language core upgrade bringing state-of-the-art memory safety, concurrency, options unboxing, and append-only audits to native regional coding.",
+      achievements: [
+        "Chokha Hisaab ledgers with immutable histories using 'hisaab', '.jama()', '.udhaar()', and '.itihas()'",
+        "Bina-Bhul safe option types avoiding null pointer exceptions using 'khaali' and 'jo (x has value)' unboxing",
+        "Isolated concurrent Pedhi Actors using 'pedhi', '.chalu()', asynchronous '.sauda()', and '.melvo()' blocking",
+        "Sharafat memory and borrow safety with default moves and temporary 'bhadu' borrow semantics",
+        "Flawless execution parity across back-end Python interpreter and React playground compiler",
+        "Complete IDE integration in the official VS Code extension with TextMate grammars and snippets"
+      ],
+      sampleCode: `sharu {
+  // === 1. Chokha Hisaab (Immutable Ledgers) ===
+  hisaab khata = 1000;
+  khata.jama(500);
+  khata.udhaar(200);
+  lakho("Ledger Balance: " + khata); // 1300
+  
+  // === 2. Bina-Bhul (Null-Safety Option Types) ===
+  do status = khaali;
+  jo (status has value) {
+    lakho("Safe value: " + status);
+  } nahitar {
+    lakho("Status is safely recognized as khaali!");
+  }
+  
+  // === 3. Vyaapaari Concurrency (Pedhi Actors) ===
+  pedhi Dukaan {
+    kaam tolo(n) {
+      aap n * 2;
+    }
+  }
+  do partner = Dukaan.chalu();
+  do deal = partner.sauda("tolo", 150);
+  lakho("Sauda melvo: " + deal.melvo()); // 300
+  
+  // === 4. Sharafat (Memory Ownership & Borrow) ===
+  kaam be_gunu(x) {
+    aap x * 2;
+  }
+  do mudal = 500;
+  do doubled = be_gunu(bhadu mudal); // Borrowed ownership safely!
+  lakho("Doubled via bhadu: " + doubled);
+} samaapt`
+    },
+    {
+      title: "v4.0.0 - Standard Libraries & Modular Importing",
+      date: "Q3 2026",
+      status: "future",
+      icon: Milestone,
+      color: "border-accent-teal text-accent-teal bg-accent-teal/5",
+      badgeColor: "bg-accent-teal/10 text-accent-teal border-accent-teal/20",
       description: "Expanding the programming ecosystem with robust built-in libraries, module importing, and mathematical toolkits.",
       achievements: [
         "Mathematical module ('ganit') containing trigonometric, absolute, and root functions",
@@ -75,10 +110,10 @@ export default function TimelinePage({ onLaunchSandbox }) {
       ]
     },
     {
-      title: "v4.0.0 - Object-Oriented Structures (vastu)",
+      title: "v5.0.0 - Object-Oriented Structures (vastu)",
       date: "Q4 2026",
       status: "future",
-      icon: Milestone,
+      icon: Clock,
       color: "border-purple-500 text-purple-500 bg-purple-500/5",
       badgeColor: "bg-purple-500/10 text-purple-500 border-purple-500/20",
       description: "Introducing object-oriented programming paradigms to support structure modeling, clean classes, inheritance, and instances.",
@@ -90,7 +125,7 @@ export default function TimelinePage({ onLaunchSandbox }) {
       ]
     },
     {
-      title: "v5.0.0 - Native Compilers & VM (kem-vm)",
+      title: "v6.0.0 - Native Compilers & VM (kem-vm)",
       date: "2027 Roadmap",
       status: "future",
       icon: Clock,
@@ -209,7 +244,7 @@ export default function TimelinePage({ onLaunchSandbox }) {
                     <div className="mt-8 pt-6 border-t border-hairline/80 space-y-4">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-soft font-mono">
-                          v2.0.0 Feature Demo Code
+                          v3.0.0 Feature Demo Code
                         </span>
                         <button
                           onClick={() => onLaunchSandbox(event.sampleCode)}
@@ -241,11 +276,11 @@ export default function TimelinePage({ onLaunchSandbox }) {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <span className="text-2xl font-serif-editorial font-medium text-primary">v2.0.0</span>
+                <span className="text-2xl font-serif-editorial font-medium text-primary">v3.0.0</span>
                 <p className="text-[10px] uppercase tracking-wider text-muted font-semibold font-body">Current Version</p>
               </div>
               <div className="space-y-1">
-                <span className="text-2xl font-serif-editorial font-medium text-accent-teal">16+</span>
+                <span className="text-2xl font-serif-editorial font-medium text-accent-teal">22+</span>
                 <p className="text-[10px] uppercase tracking-wider text-muted font-semibold font-body">Core Keywords</p>
               </div>
               <div className="space-y-1">

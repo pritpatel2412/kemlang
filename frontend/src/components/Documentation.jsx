@@ -13,7 +13,7 @@ function CodeBlock({ code, onLoadCode }) {
 
   // Simple syntax colorizer for Gujarati keywords to look incredibly premium in static cards
   const highlightCode = (raw) => {
-    const keywords = ["sharu", "samaapt", "do", "jo", "nahitar", "jyaare", "jaano", "lakho", "kharu", "khotu", "kaam", "aap", "ane", "athva", "lambai", "umedo"];
+    const keywords = ["sharu", "samaapt", "do", "jo", "nahitar", "jyaare", "jaano", "lakho", "kharu", "khotu", "kaam", "aap", "ane", "athva", "lambai", "umedo", "hisaab", "khaali", "has", "value", "pedhi", "bhadu"];
     return raw.split("\n").map((line, lIdx) => {
       // Split line into words and preserve spaces/syntax
       let processed = line;
@@ -31,15 +31,15 @@ function CodeBlock({ code, onLoadCode }) {
       // Highlight keywords
       keywords.forEach((kw) => {
         const regex = new RegExp(`\\b${kw}\\b`, "g");
-        if (kw === "sharu" || kw === "samaapt" || kw === "kaam") {
+        if (kw === "sharu" || kw === "samaapt" || kw === "kaam" || kw === "pedhi") {
           processed = processed.replace(regex, `<span class="text-primary font-semibold">${kw}</span>`);
-        } else if (kw === "do" || kw === "jo" || kw === "nahitar" || kw === "jyaare" || kw === "jaano") {
+        } else if (kw === "do" || kw === "jo" || kw === "nahitar" || kw === "jyaare" || kw === "jaano" || kw === "hisaab") {
           processed = processed.replace(regex, `<span class="text-primary">${kw}</span>`);
-        } else if (kw === "lakho" || kw === "aap" || kw === "lambai" || kw === "umedo") {
+        } else if (kw === "lakho" || kw === "aap" || kw === "lambai" || kw === "umedo" || kw === "bhadu") {
           processed = processed.replace(regex, `<span class="text-accent-teal font-semibold">${kw}</span>`);
-        } else if (kw === "kharu" || kw === "khotu") {
+        } else if (kw === "kharu" || kw === "khotu" || kw === "khaali") {
           processed = processed.replace(regex, `<span class="text-accent-amber">${kw}</span>`);
-        } else if (kw === "ane" || kw === "athva") {
+        } else if (kw === "ane" || kw === "athva" || kw === "has" || kw === "value") {
           processed = processed.replace(regex, `<span class="text-accent-teal">${kw}</span>`);
         }
       });
@@ -213,6 +213,33 @@ export default function Documentation({ onLoadCode }) {
           code: `sharu {\n  lakho("Enter user age:");\n  do userAge = "";\n  jaano userAge;\n  lakho("User is " + userAge + " years old!");\n} samaapt`
         }
       ]
+    },
+    {
+      title: "Advanced System Paradigms (v3.0.0)",
+      icon: Layers,
+      desc: "KemLang v3.0.0 introduces cutting-edge system-level paradigms: Append-only ledger accounting, fail-safe Null-safety, concurrent Actor threads, and memory ownership constraints.",
+      items: [
+        {
+          name: "Chokha Hisaab (Append-Only Ledgers)",
+          desc: "Define a ledger variable using 'hisaab'. It keeps a permanent transaction history. Append updates using '.jama(amount)' and '.udhaar(amount)'. Access past states with '.itihas(index)'. Modifying ledger records manually is strictly prohibited, preventing financial fraud in execution states.",
+          code: `sharu {\n  hisaab khata = 1000;\n  khata.jama(500); // 1500\n  khata.udhaar(200); // 1300\n  do current = khata;\n  do opening = khata.itihas(0); // 1000\n  lakho("Current balance: " + current);\n} samaapt`
+        },
+        {
+          name: "Bina-Bhul (Null-Safety Option Types)",
+          desc: "Variables can be set to 'khaali' (null/nothing). Accessing them will crash the interpreter unless safely unboxed under a 'jo (variable has value)' conditional block. This guarantees zero runtime null exceptions.",
+          code: `sharu {\n  do status = khaali;\n  jo (status has value) {\n    do safe_status = status;\n    lakho("Status has value: " + safe_status);\n  } nahitar {\n    lakho("Status is khaali!");\n  }\n} samaapt`
+        },
+        {
+          name: "Vyaapaari Concurrency (Pedhi Actors)",
+          desc: "Define actor classes using 'pedhi'. Instantiate them into independent actor memory threads with '.chalu()'. Communicate asynchronously by sending non-blocking transaction contracts using '.sauda(kaamName, args)' and await results using blocking '.melvo()'.",
+          code: `pedhi Dukaan {\n  kaam tolo(n) {\n    aap n * 2;\n  }\n}\n\nsharu {\n  do partner = Dukaan.chalu();\n  do deal = partner.sauda("tolo", 150);\n  do total = deal.melvo();\n  lakho("Deal finalized: " + total); // Output: 300\n} samaapt`
+        },
+        {
+          name: "Sharafat (Memory Ownership & Borrow)",
+          desc: "Manage variables with strict safety rules. By default, passing an identifier to a function moves its ownership, rendering it illegal to access afterwards. To keep ownership, borrow it temporarily using 'bhadu'.",
+          code: `kaam be_gunu(n) {\n  aap n * 2;\n}\n\nsharu {\n  do mudal = 500;\n  // Borrow mudal with 'bhadu'\n  do doubled = be_gunu(bhadu mudal);\n  // Move mudal ownership\n  do final_val = be_gunu(mudal);\n  lakho("Mudal is now moved & unusable!");\n} samaapt`
+        }
+      ]
     }
   ];
 
@@ -221,7 +248,7 @@ export default function Documentation({ onLoadCode }) {
       {/* Header section */}
       <div className="text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card border border-hairline text-primary text-xs font-semibold uppercase tracking-wider font-body">
-          Reference Manual - v2.0.0
+          Reference Manual - v3.0.0
         </div>
         <h1 className="text-5xl md:text-6xl font-serif-editorial text-ink tracking-display-tight">
           Syntax & Language Specification

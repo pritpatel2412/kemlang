@@ -23,6 +23,8 @@ export class Environment {
   constructor(parent = null) {
     this.records = {};
     this.parent = parent;
+    this.safeVars = new Set();
+    this.ownership = {};
   }
 
   define(name, value) {
@@ -49,6 +51,137 @@ export class Environment {
     }
     throw new Error(`Undefined variable: ${name}`);
   }
+
+  makeSafe(name) {
+    this.safeVars.add(name);
+  }
+
+  isSafe(name) {
+    if (this.safeVars.has(name)) {
+      return true;
+    }
+    if (this.parent) {
+      return this.parent.isSafe(name);
+    }
+    return false;
+  }
+
+  checkOwnership(name) {
+    if (name in this.records) {
+      if (this.ownership[name] === "moved") {
+        throw new Error(`❌ Sharafat Safety Error: Variable '${name}' no ownership (already moved/transferred)!`);
+      }
+      return;
+    }
+    if (this.parent) {
+      this.parent.checkOwnership(name);
+      return;
+    }
+  }
+
+  moveOwnership(name) {
+    if (name in this.records) {
+      this.ownership[name] = "moved";
+      return;
+    }
+    if (this.parent) {
+      this.parent.moveOwnership(name);
+    }
+  }
+}
+
+// ----------------------------------------------------
+// Ledger, Khaali, Pedhi and Sauda classes
+// ----------------------------------------------------
+
+export class Ledger {
+  constructor(initialValue) {
+    this.history = [initialValue];
+  }
+
+  jama(val) {
+    const newVal = this.history[this.history.length - 1] + val;
+    this.history.push(newVal);
+    return newVal;
+  }
+
+  udhaar(val) {
+    const newVal = this.history[this.history.length - 1] - val;
+    this.history.push(newVal);
+    return newVal;
+  }
+
+  itihas(idx) {
+    if (idx < 0 || idx >= this.history.length) {
+      throw new Error("Ledger itihas index out of bounds!");
+    }
+    return this.history[idx];
+  }
+
+  current() {
+    return this.history[this.history.length - 1];
+  }
+
+  toString() {
+    return `Ledger([${this.history.join(", ")}])`;
+  }
+}
+
+export class KhaaliClass {
+  toString() {
+    return "khaali";
+  }
+}
+export const khaali = new KhaaliClass();
+
+export class PedhiInstance {
+  constructor(pedhiName, methods, evaluator) {
+    this.pedhiName = pedhiName;
+    this.methods = methods;
+    this.evaluator = evaluator;
+    this.actorEnv = new Environment(evaluator.globalEnv);
+  }
+
+  sauda(methodName, args) {
+    if (!(methodName in this.methods)) {
+      throw new Error(`kaam '${methodName}' not defined in pedhi '${this.pedhiName}'!`);
+    }
+    const func = this.methods[methodName];
+    const params = func.params;
+    
+    const resVal = this.evaluator.evaluateFunctionSync({
+      params,
+      body: func.body,
+      closure: this.actorEnv
+    }, args);
+    
+    return new SaudaContract(resVal);
+  }
+
+  toString() {
+    return `PedhiInstance(${this.pedhiName})`;
+  }
+}
+
+export class SaudaContract {
+  constructor(val) {
+    this.val = val;
+  }
+
+  melvo() {
+    return this.val;
+  }
+
+  toString() {
+    return `SaudaContract(${this.val})`;
+  }
+}
+
+export function unwrapVal(val) {
+  if (val instanceof Ledger) {
+    return val.current();
+  }
+  return val;
 }
 
 // ----------------------------------------------------
@@ -83,7 +216,13 @@ export class Lexer {
       "jaano": "INPUT",
       "kaam": "FUNCTION",
       "ane": "AND",
-      "athva": "OR"
+      "athva": "OR",
+      "hisaab": "HISAAB_DECLARE",
+      "khaali": "KHAALI",
+      "has": "HAS",
+      "value": "VALUE",
+      "pedhi": "PEDHI",
+      "bhadu": "BORROW"
     };
   }
 
@@ -173,7 +312,7 @@ export class Lexer {
       } else if ("+-*/%".includes(this.current_char)) {
         tokens.push(new Token("OPERATOR", this.current_char, this.line));
         this.advance();
-      } else if ("{}();[],".includes(this.current_char)) {
+      } else if ("{}();[],.".includes(this.current_char)) {
         tokens.push(new Token("SYMBOL", this.current_char, this.line));
         this.advance();
       } else {
@@ -181,7 +320,7 @@ export class Lexer {
         const pos = this.pos;
         const line = this.line;
         this.advance();
-        throw new Error(`❌ Error: Unknown character '${char}' at position {pos} (Line ${line})`);
+        throw new Error(`❌ Error: Unknown character '${char}' at position ${pos} (Line ${line})`);
       }
     }
     return tokens;
@@ -260,6 +399,10 @@ export class Parser {
     ) {
       if (this.currentToken.type === "VAR_DECLARE") {
         statements.push(this.parseAssignment());
+      } else if (this.currentToken.type === "HISAAB_DECLARE") {
+        statements.push(this.parseHisaabDeclare());
+      } else if (this.currentToken.type === "PEDHI") {
+        statements.push(this.parsePedhiDef());
       } else if (this.currentToken.type === "PRINT") {
         statements.push(this.parsePrint());
       } else if (this.currentToken.type === "IF") {
@@ -275,7 +418,6 @@ export class Parser {
       } else if (this.currentToken.type === "IDENTIFIER") {
         statements.push(this.parseReassignment());
       } else {
-        // Skip unknown token inside block
         this.advance();
       }
     }
@@ -303,6 +445,86 @@ export class Parser {
       value,
       line
     };
+  }
+
+  parseHisaabDeclare() {
+    const line = this.currentToken.line;
+    this.advance(); // Skip 'hisaab'
+    if (this.currentToken === null || this.currentToken.type !== "IDENTIFIER") {
+      this.raiseError("'hisaab' pachi variable naam aavvu joie bro!");
+    }
+    const varName = this.currentToken.value;
+    this.advance();
+    if (this.currentToken === null || this.currentToken.value !== "=") {
+      this.raiseError(`Ledger variable '${varName}' pachi '=' mukvanu bhooli gaya!`);
+    }
+    this.advance();
+    const value = this.parseExpression();
+    this.expectSemicolon();
+    return {
+      id: uniqueId("hisaab_assign"),
+      type: "HISAAB_ASSIGN",
+      varName,
+      value,
+      line
+    };
+  }
+
+  parsePedhiDef() {
+    const line = this.currentToken.line;
+    this.advance(); // Skip 'pedhi'
+    if (this.currentToken === null || this.currentToken.type !== "IDENTIFIER") {
+      this.raiseError("'pedhi' pachi organization/actor nu naam aavvu joie!");
+    }
+    const pedhiName = this.currentToken.value;
+    this.advance();
+    if (this.currentToken === null || this.currentToken.value !== "{") {
+      this.raiseError("'pedhi' name pachi '{' aavvu joie!");
+    }
+    this.advance();
+
+    const methods = {};
+    while (this.currentToken && this.currentToken.value !== "}") {
+      if (this.currentToken.type === "FUNCTION") {
+        const func = this.parseFunctionDef();
+        methods[func.funcName] = func;
+      } else {
+        this.raiseError("pedhi ni andar khali functions ('kaam') ja lakhi shakay!");
+      }
+    }
+
+    if (this.currentToken === null || this.currentToken.value !== "}") {
+      this.raiseError("'pedhi' body bandh karva '}' mukvanu bhooli gaya!");
+    }
+    this.advance();
+
+    return {
+      id: uniqueId("pedhi_def"),
+      type: "PEDHI_DEF",
+      pedhiName,
+      methods,
+      line
+    };
+  }
+
+  parseCallArg() {
+    if (this.currentToken && this.currentToken.type === "BORROW") {
+      const line = this.currentToken.line;
+      this.advance(); // skip 'bhadu'
+      if (this.currentToken === null || this.currentToken.type !== "IDENTIFIER") {
+        this.raiseError("'bhadu' pachi variable nu naam aavvu joie!");
+      }
+      const varName = this.currentToken.value;
+      this.advance();
+      return {
+        id: uniqueId("borrow_arg"),
+        type: "BORROW_ARG",
+        varName,
+        line
+      };
+    } else {
+      return this.parseExpression();
+    }
   }
 
   parseReassignment() {
@@ -558,23 +780,40 @@ export class Parser {
 
   parseComparison() {
     let left = this.parseAddSub();
-    while (
-      this.currentToken &&
-      this.currentToken.type === "OPERATOR" &&
-      ["==", "!=", "<", ">", "<=", ">="].includes(this.currentToken.value)
-    ) {
-      const op = this.currentToken.value;
-      const line = this.currentToken.line;
-      this.advance();
-      const right = this.parseAddSub();
-      left = {
-        id: uniqueId("binop"),
-        type: "BIN_OP",
-        op,
-        left,
-        right,
-        line
-      };
+    while (true) {
+      if (
+        this.currentToken &&
+        this.currentToken.type === "OPERATOR" &&
+        ["==", "!=", "<", ">", "<=", ">="].includes(this.currentToken.value)
+      ) {
+        const op = this.currentToken.value;
+        const line = this.currentToken.line;
+        this.advance();
+        const right = this.parseAddSub();
+        left = {
+          id: uniqueId("binop"),
+          type: "BIN_OP",
+          op,
+          left,
+          right,
+          line
+        };
+      } else if (this.currentToken && this.currentToken.type === "HAS") {
+        const line = this.currentToken.line;
+        this.advance(); // Skip 'has'
+        if (this.currentToken === null || this.currentToken.type !== "VALUE") {
+          this.raiseError("'has' pachi 'value' keyword mukvanu bhooli gaya bro!");
+        }
+        this.advance(); // Skip 'value'
+        left = {
+          id: uniqueId("has_value"),
+          type: "HAS_VALUE",
+          expr: left,
+          line
+        };
+      } else {
+        break;
+      }
     }
     return left;
   }
@@ -656,6 +895,13 @@ export class Parser {
         value: tok.value === "kharu",
         line: tok.line
       };
+    } else if (tok.type === "KHAALI") {
+      this.advance();
+      base = {
+        id: uniqueId("literal"),
+        type: "KHAALI",
+        line: tok.line
+      };
     } else if (tok.type === "IDENTIFIER") {
       this.advance();
       base = {
@@ -696,17 +942,17 @@ export class Parser {
       this.raiseError(`Unexpected token in expression: ${tok.type} (${tok.value})`);
     }
 
-    // Now handle trailing function calls or index access
-    while (this.currentToken && (this.currentToken.value === "(" || this.currentToken.value === "[")) {
+    // Now handle trailing function calls or index access or dot operator
+    while (this.currentToken && (this.currentToken.value === "(" || this.currentToken.value === "[" || this.currentToken.value === ".")) {
       if (this.currentToken.value === "(") {
         const callLine = this.currentToken.line;
         this.advance(); // skip '('
         const args = [];
         if (this.currentToken && this.currentToken.value !== ")") {
-          args.push(this.parseExpression());
+          args.push(this.parseCallArg());
           while (this.currentToken && this.currentToken.value === ",") {
             this.advance();
-            args.push(this.parseExpression());
+            args.push(this.parseCallArg());
           }
         }
         if (this.currentToken === null || this.currentToken.value !== ")") {
@@ -735,6 +981,45 @@ export class Parser {
           indexExpr,
           line: indexLine
         };
+      } else if (this.currentToken.value === ".") {
+        const line = this.currentToken.line;
+        this.advance(); // skip '.'
+        if (this.currentToken === null || this.currentToken.type !== "IDENTIFIER") {
+          this.raiseError("'.' pachi method/member nu naam aavvu joie bro!");
+        }
+        const memberName = this.currentToken.value;
+        this.advance();
+        if (this.currentToken && this.currentToken.value === "(") {
+          this.advance(); // skip '('
+          const args = [];
+          if (this.currentToken && this.currentToken.value !== ")") {
+            args.push(this.parseCallArg());
+            while (this.currentToken && this.currentToken.value === ",") {
+              this.advance();
+              args.push(this.parseCallArg());
+            }
+          }
+          if (this.currentToken === null || this.currentToken.value !== ")") {
+            this.raiseError("Method call bandh karva ')' mukvanu bhooli gaya!");
+          }
+          this.advance(); // skip ')'
+          base = {
+            id: uniqueId("method_call"),
+            type: "METHOD_CALL",
+            base,
+            memberName,
+            args,
+            line
+          };
+        } else {
+          base = {
+            id: uniqueId("member_access"),
+            type: "MEMBER_ACCESS",
+            base,
+            memberName,
+            line
+          };
+        }
       }
     }
 
@@ -780,6 +1065,16 @@ export class Evaluator {
         } catch {
           env.define(stmt.varName, val);
         }
+      } else if (stmt.type === "HISAAB_ASSIGN") {
+        const val = this.evaluateExpr(stmt.value, env);
+        const ledger = new Ledger(val);
+        env.define(stmt.varName, ledger);
+      } else if (stmt.type === "PEDHI_DEF") {
+        env.define(stmt.pedhiName, {
+          type: "PEDHI_CLASS",
+          pedhiName: stmt.pedhiName,
+          methods: stmt.methods
+        });
       } else if (stmt.type === "INDEX_ASSIGN") {
         const arr = this.evaluateExpr(stmt.target.base, env);
         const idx = this.evaluateExpr(stmt.target.indexExpr, env);
@@ -798,9 +1093,12 @@ export class Evaluator {
         throw new ReturnException(val);
       } else if (stmt.type === "IF") {
         const cond = this.evaluateExpr(stmt.condition, env);
+        const blockEnv = new Environment(env);
+        if (cond && stmt.condition.type === "HAS_VALUE" && stmt.condition.expr.type === "VAR") {
+          blockEnv.makeSafe(stmt.condition.expr.varName);
+        }
         const block = cond ? stmt.ifBlock : stmt.elseBlock;
         if (block) {
-          const blockEnv = new Environment(env);
           for (const s of block) {
             evalStatement(s, blockEnv);
           }
@@ -833,13 +1131,17 @@ export class Evaluator {
     return null;
   }
 
-  // Evaluates plain expressions synchronously
-  evaluateExpr(node, env = null) {
+  // Evaluates plain expressions synchronously (raw)
+  evaluateExprRaw(node, env = null) {
     if (env === null) {
       env = this.globalEnv;
     }
     if (node === null || typeof node !== "object") {
       return node;
+    }
+
+    if (node.type === "KHAALI") {
+      return khaali;
     }
 
     if (node.type === "LITERAL") {
@@ -849,7 +1151,14 @@ export class Evaluator {
     if (node.type === "VAR") {
       const varName = node.varName;
       try {
-        return env.lookup(varName);
+        env.checkOwnership(varName);
+        const val = env.lookup(varName);
+        if (val === khaali) {
+          if (!env.isSafe(varName)) {
+            throw new Error(`❌ Bina-Bhul Safety Exception: Attempted to operate on unchecked 'khaali' variable '${varName}'!`);
+          }
+        }
+        return val;
       } catch (err) {
         throw new Error(`${err.message} (Line ${node.line})`);
       }
@@ -871,9 +1180,21 @@ export class Evaluator {
       return base[idx];
     }
 
+    if (node.type === "HAS_VALUE") {
+      let val;
+      if (node.expr && node.expr.type === "VAR") {
+        const varName = node.expr.varName;
+        env.checkOwnership(varName);
+        val = env.lookup(varName);
+      } else {
+        val = this.evaluateExprRaw(node.expr, env);
+      }
+      return val !== khaali;
+    }
+
     if (node.type === "CALL") {
       const calleeName = node.callee.type === "VAR" ? node.callee.varName : "";
-      const args = node.args.map(arg => this.evaluateExpr(arg, env));
+      const args = this.evaluateCallArgs(node.args, env);
 
       if (calleeName === "lambai") {
         if (args.length !== 1) {
@@ -904,6 +1225,61 @@ export class Evaluator {
       }
 
       return this.evaluateFunctionSync(func, args);
+    }
+
+    if (node.type === "METHOD_CALL") {
+      const baseVal = this.evaluateExprRaw(node.base, env);
+      const methodName = node.memberName;
+      const args = this.evaluateCallArgs(node.args, env);
+
+      if (baseVal && baseVal.type === "PEDHI_CLASS") {
+        if (methodName === "chalu") {
+          return new PedhiInstance(baseVal.pedhiName, baseVal.methods, this);
+        } else {
+          throw new Error(`Unknown static pedhi method: ${methodName} (Line ${node.line})`);
+        }
+      }
+
+      if (baseVal instanceof PedhiInstance) {
+        if (methodName === "sauda") {
+          if (args.length < 1) {
+            throw new Error(`sauda method expects at least the method name argument! (Line ${node.line})`);
+          }
+          return baseVal.sauda(args[0], args.slice(1));
+        } else {
+          throw new Error(`Unknown pedhi instance method: ${methodName} (Line ${node.line})`);
+        }
+      }
+
+      if (baseVal instanceof SaudaContract) {
+        if (methodName === "melvo") {
+          return baseVal.melvo();
+        } else {
+          throw new Error(`Unknown sauda contract method: ${methodName} (Line ${node.line})`);
+        }
+      }
+
+      if (baseVal instanceof Ledger) {
+        if (methodName === "jama") {
+          if (args.length !== 1) throw new Error(`jama expects 1 argument! (Line ${node.line})`);
+          return baseVal.jama(args[0]);
+        } else if (methodName === "udhaar") {
+          if (args.length !== 1) throw new Error(`udhaar expects 1 argument! (Line ${node.line})`);
+          return baseVal.udhaar(args[0]);
+        } else if (methodName === "itihas") {
+          if (args.length !== 1) throw new Error(`itihas expects 1 argument! (Line ${node.line})`);
+          return baseVal.itihas(args[0]);
+        } else {
+          throw new Error(`Unknown ledger method: ${methodName} (Line ${node.line})`);
+        }
+      }
+
+      throw new Error(`Method calls are not supported on this type! (Line ${node.line})`);
+    }
+
+    if (node.type === "MEMBER_ACCESS") {
+      const baseVal = this.evaluateExpr(node.base, env);
+      throw new Error(`Member access '${node.memberName}' is not supported on this object! (Line ${node.line})`);
     }
 
     if (node.type === "BIN_OP") {
@@ -945,6 +1321,38 @@ export class Evaluator {
     throw new Error(`Unknown expression node: ${node.type} (Line ${node.line})`);
   }
 
+  evaluateExpr(node, env = null) {
+    const res = this.evaluateExprRaw(node, env);
+    return unwrapVal(res);
+  }
+
+  evaluateCallArgs(argNodes, env) {
+    const evaluatedArgs = [];
+    for (const arg of argNodes) {
+      if (arg && arg.type === "BORROW_ARG") {
+        const varName = arg.varName;
+        env.checkOwnership(varName);
+        const val = env.lookup(varName);
+        if (val === khaali && !env.isSafe(varName)) {
+          throw new Error(`❌ Bina-Bhul Safety Exception: Attempted to operate on unchecked 'khaali' variable '${varName}'! (Line ${arg.line})`);
+        }
+        evaluatedArgs.push(val);
+      } else if (arg && arg.type === "VAR") {
+        const varName = arg.varName;
+        env.checkOwnership(varName);
+        const val = env.lookup(varName);
+        if (val === khaali && !env.isSafe(varName)) {
+          throw new Error(`❌ Bina-Bhul Safety Exception: Attempted to operate on unchecked 'khaali' variable '${varName}'! (Line ${arg.line})`);
+        }
+        evaluatedArgs.push(val);
+        env.moveOwnership(varName);
+      } else {
+        evaluatedArgs.push(this.evaluateExpr(arg, env));
+      }
+    }
+    return evaluatedArgs;
+  }
+
   /**
    * Generator-based statement evaluator.
    * Yields at each statement pause. The yielder returns:
@@ -968,6 +1376,8 @@ export class Evaluator {
     // Yield statement before execution for debugging highlights
     if (
       node.type === "ASSIGN" ||
+      node.type === "HISAAB_ASSIGN" ||
+      node.type === "PEDHI_DEF" ||
       node.type === "INDEX_ASSIGN" ||
       node.type === "PRINT" ||
       node.type === "INPUT" ||
@@ -975,7 +1385,8 @@ export class Evaluator {
       node.type === "WHILE" ||
       node.type === "FUNCTION_DEF" ||
       node.type === "RETURN" ||
-      node.type === "CALL"
+      node.type === "CALL" ||
+      node.type === "METHOD_CALL"
     ) {
       yield {
         node,
@@ -993,6 +1404,24 @@ export class Evaluator {
       } catch {
         env.define(node.varName, val);
       }
+      this.variables = this.globalEnv.records;
+    }
+
+    // HISAAB ASSIGNMENT
+    else if (node.type === "HISAAB_ASSIGN") {
+      const val = this.evaluateExpr(node.value, env);
+      const ledger = new Ledger(val);
+      env.define(node.varName, ledger);
+      this.variables = this.globalEnv.records;
+    }
+
+    // PEDHI DEFINITION
+    else if (node.type === "PEDHI_DEF") {
+      env.define(node.pedhiName, {
+        type: "PEDHI_CLASS",
+        pedhiName: node.pedhiName,
+        methods: node.methods
+      });
       this.variables = this.globalEnv.records;
     }
 
@@ -1034,6 +1463,8 @@ export class Evaluator {
           processedInput = true;
         } else if (rawInput === "khotu" || rawInput === "false") {
           processedInput = false;
+        } else if (rawInput === "khaali") {
+          processedInput = khaali;
         }
       }
       try {
@@ -1047,10 +1478,14 @@ export class Evaluator {
     // 4. IF CONDITIONAL
     else if (node.type === "IF") {
       const condVal = this.evaluateExpr(node.condition, env);
+      const blockEnv = new Environment(env);
+      if (condVal && node.condition.type === "HAS_VALUE" && node.condition.expr.type === "VAR") {
+        blockEnv.makeSafe(node.condition.expr.varName);
+      }
       if (condVal) {
-        yield* this.evaluate(node.ifBlock, env);
+        yield* this.evaluate(node.ifBlock, blockEnv);
       } else if (node.elseBlock) {
-        yield* this.evaluate(node.elseBlock, env);
+        yield* this.evaluate(node.elseBlock, blockEnv);
       }
     }
 

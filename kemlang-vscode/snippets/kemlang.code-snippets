@@ -87,5 +87,39 @@
       "lambai(${1:listName})"
     ],
     "description": "KemLang: Get the length of an array list"
+  },
+  "Ledger Declaration": {
+    "prefix": "hisaab",
+    "body": [
+      "hisaab ${1:khata} = ${2:initialValue};"
+    ],
+    "description": "KemLang: Declare an append-only Ledger (Chokha Hisaab)"
+  },
+  "Null Safety Check": {
+    "prefix": "johas",
+    "body": [
+      "jo (${1:variable} has value) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "KemLang: Failure-proof Null Safety Check (Bina-Bhul)"
+  },
+  "Actor Pedhi definition": {
+    "prefix": "pedhi",
+    "body": [
+      "pedhi ${1:Dukaan} {",
+      "\tkaam ${2:tolo}(${3:n}) {",
+      "\t\taap ${4:n * 2};",
+      "\t}",
+      "}"
+    ],
+    "description": "KemLang: Declare an isolated concurrent Actor (Pedhi)"
+  },
+  "Borrow argument": {
+    "prefix": "bhadu",
+    "body": [
+      "bhadu ${1:variable}"
+    ],
+    "description": "KemLang: Borrow ownership of a variable (Sharafat)"
   }
 }

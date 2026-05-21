@@ -3,7 +3,7 @@
   "displayName": "kemlang-vscode",
   "description": "VS Code support for .kem files in KemLang",
   "publisher": "PritPatel",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "icon": "icons/k-icon.png",
   "engines": {
     "vscode": "^1.101.0"

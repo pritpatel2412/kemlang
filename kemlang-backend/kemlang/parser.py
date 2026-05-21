@@ -37,6 +37,10 @@ class Parser:
         ):
             if self.current_token.type == "VAR_DECLARE":
                 statements.append(self.parse_assignment())
+            elif self.current_token.type == "HISAAB_DECLARE":
+                statements.append(self.parse_hisaab_declare())
+            elif self.current_token.type == "PEDHI":
+                statements.append(self.parse_pedhi_def())
             elif self.current_token.type == "PRINT":
                 statements.append(self.parse_print())
             elif self.current_token.type == "IF":
@@ -72,6 +76,53 @@ class Parser:
         value = self.parse_expression()
         self.expect_semicolon()
         return ("ASSIGN", var_name, value)
+
+    def parse_hisaab_declare(self):
+        self.advance()  # Skip 'hisaab'
+        if self.current_token is None or self.current_token.type != "IDENTIFIER":
+            self.raise_error("'hisaab' pachi variable naam aavvu joie bro!")
+        var_name = self.current_token.value
+        self.advance()
+        if self.current_token is None or self.current_token.value != "=":
+            self.raise_error(f"Ledger variable '{var_name}' pachi '=' mukvanu bhooli gaya!")
+        self.advance()
+        value = self.parse_expression()
+        self.expect_semicolon()
+        return ("HISAAB_ASSIGN", var_name, value)
+
+    def parse_pedhi_def(self):
+        self.advance()  # Skip 'pedhi'
+        if self.current_token is None or self.current_token.type != "IDENTIFIER":
+            self.raise_error("'pedhi' pachi organization/actor nu naam aavvu joie!")
+        pedhi_name = self.current_token.value
+        self.advance()
+        if self.current_token is None or self.current_token.value != "{":
+            self.raise_error("'pedhi' name pachi '{' aavvu joie!")
+        self.advance()
+        
+        methods = {}
+        while self.current_token and self.current_token.value != "}":
+            if self.current_token.type == "FUNCTION":
+                func = self.parse_function_def()
+                methods[func[1]] = func
+            else:
+                self.raise_error("pedhi ni andar khali functions ('kaam') ja lakhi shakay!")
+                
+        if self.current_token is None or self.current_token.value != "}":
+            self.raise_error("'pedhi' body bandh karva '}' mukvanu bhooli gaya!")
+        self.advance()
+        return ("PEDHI_DEF", pedhi_name, methods)
+
+    def parse_call_arg(self):
+        if self.current_token and self.current_token.type == "BORROW":
+            self.advance()  # skip 'bhadu'
+            if self.current_token is None or self.current_token.type != "IDENTIFIER":
+                self.raise_error("'bhadu' pachi variable nu naam aavvu joie!")
+            var_name = self.current_token.value
+            self.advance()
+            return ("BORROW_ARG", var_name)
+        else:
+            return self.parse_expression()
 
     def parse_reassignment(self):
         lhs = self.parse_expression()
@@ -209,11 +260,20 @@ class Parser:
 
     def parse_comparison(self):
         left = self.parse_add_sub()
-        while self.current_token and self.current_token.type == "OPERATOR" and self.current_token.value in ("==", "!=", "<", ">", "<=", ">="):
-            op = self.current_token.value
-            self.advance()
-            right = self.parse_add_sub()
-            left = ("BIN_OP", op, left, right)
+        while True:
+            if self.current_token and self.current_token.type == "OPERATOR" and self.current_token.value in ("==", "!=", "<", ">", "<=", ">="):
+                op = self.current_token.value
+                self.advance()
+                right = self.parse_add_sub()
+                left = ("BIN_OP", op, left, right)
+            elif self.current_token and self.current_token.type == "HAS":
+                self.advance()  # Skip 'has'
+                if self.current_token is None or self.current_token.type != "VALUE":
+                    self.raise_error("'has' pachi 'value' keyword mukvanu bhooli gaya bro!")
+                self.advance()  # Skip 'value'
+                left = ("HAS_VALUE", left)
+            else:
+                break
         return left
 
     def parse_add_sub(self):
@@ -245,6 +305,9 @@ class Parser:
         elif tok.type == "BOOLEAN":
             self.advance()
             base = True if tok.value == "kharu" else False
+        elif tok.type == "KHAALI":
+            self.advance()
+            base = ("KHAALI",)
         elif tok.type == "IDENTIFIER":
             self.advance()
             base = ("VAR", tok.value)
@@ -271,15 +334,15 @@ class Parser:
             self.raise_error(f"Unexpected token in expression: {tok.type} ({tok.value})")
 
         # Now handle index access or function calls trailing the base
-        while self.current_token and self.current_token.value in ("(", "["):
+        while self.current_token and self.current_token.value in ("(", "[", "."):
             if self.current_token.value == "(":
                 self.advance()  # skip '('
                 args = []
                 if self.current_token and self.current_token.value != ")":
-                    args.append(self.parse_expression())
+                    args.append(self.parse_call_arg())
                     while self.current_token and self.current_token.value == ",":
                         self.advance()
-                        args.append(self.parse_expression())
+                        args.append(self.parse_call_arg())
                 if self.current_token is None or self.current_token.value != ")":
                     self.raise_error("Function call bandh karva ')' mukvanu bhooli gaya!")
                 self.advance()
@@ -294,6 +357,27 @@ class Parser:
                     self.raise_error("Index bracket bandh karva ']' mukvanu bhooli gaya!")
                 self.advance()
                 base = ("INDEX", base, index_expr)
+            elif self.current_token.value == ".":
+                self.advance()  # skip '.'
+                if self.current_token is None or self.current_token.type != "IDENTIFIER":
+                    self.raise_error("'.' pachi method/member nu naam aavvu joie bro!")
+                member_name = self.current_token.value
+                self.advance()
+                # Check if it's a method call
+                if self.current_token and self.current_token.value == "(":
+                    self.advance()  # skip '('
+                    args = []
+                    if self.current_token and self.current_token.value != ")":
+                        args.append(self.parse_call_arg())
+                        while self.current_token and self.current_token.value == ",":
+                            self.advance()
+                            args.append(self.parse_call_arg())
+                    if self.current_token is None or self.current_token.value != ")":
+                        self.raise_error("Method call bandh karva ')' mukvanu bhooli gaya!")
+                    self.advance()
+                    base = ("METHOD_CALL", base, member_name, args)
+                else:
+                    base = ("MEMBER_ACCESS", base, member_name)
 
         return base
 

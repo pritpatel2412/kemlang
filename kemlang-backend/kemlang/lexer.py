@@ -27,7 +27,13 @@ class Lexer:
             "jaano": "INPUT",
             "kaam": "FUNCTION",
             "ane": "AND",
-            "athva": "OR"
+            "athva": "OR",
+            "hisaab": "HISAAB_DECLARE",
+            "khaali": "KHAALI",
+            "has": "HAS",
+            "value": "VALUE",
+            "pedhi": "PEDHI",
+            "bhadu": "BORROW"
         }
 
     def advance(self):
@@ -100,7 +106,7 @@ class Lexer:
             elif self.current_char in "+-*/%":
                 tokens.append(Token("OPERATOR", self.current_char, self.line))
                 self.advance()
-            elif self.current_char in "{}();[],":
+            elif self.current_char in "{}();[],.":
                 tokens.append(Token("SYMBOL", self.current_char, self.line))
                 self.advance()
             else:

@@ -16,11 +16,11 @@
       "name": "support.function.builtin.kemlang"
     },
     {
-      "match": "\\bdo\\b",
+      "match": "\\b(do|hisaab)\\b",
       "name": "variable.declaration.kemlang"
     },
     {
-      "match": "\\bkaam\\b",
+      "match": "\\b(kaam|pedhi)\\b",
       "name": "storage.type.function.kemlang"
     },
     {
@@ -36,15 +36,19 @@
       "name": "keyword.control.return.kemlang"
     },
     {
-      "match": "\\b(ane|athva)\\b",
+      "match": "\\b(ane|athva|has|value)\\b",
       "name": "keyword.operator.logical.kemlang"
     },
     {
-      "match": "\\b(kharu|khotu)\\b",
+      "match": "\\bbhadu\\b",
+      "name": "keyword.modifier.borrow.kemlang"
+    },
+    {
+      "match": "\\b(kharu|khotu|khaali)\\b",
       "name": "constant.language.boolean.kemlang"
     },
     {
-      "match": "==|!=|<=|>=|=|<|>|\\+|\\-|\\*|/|%",
+      "match": "==|!=|<=|>=|=|<|>|\\+|\\-|\\*|/|%|\\.",
       "name": "keyword.operator.kemlang"
     },
     {
@@ -60,5 +64,5 @@
       "name": "variable.other.kemlang"
     }
   ],
-  "uuid": "kemlang-syntax-v1"
+  "uuid": "kemlang-syntax-v3"
 }
