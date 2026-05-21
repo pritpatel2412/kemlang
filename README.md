@@ -31,8 +31,12 @@ KemLang addresses this directly. It maps core programming constructs to familiar
 
 ## Features
 
-- Gujarati keyword syntax (`sharu`, `samaapt`, `lakho`, `jo`, `nahitar`, `jyaare`, `do`, `jaano`, `kaam`, `aap`, `ane`, `athva`)
+- Gujarati keyword syntax (`sharu`, `samaapt`, `lakho`, `jo`, `nahitar`, `jyaare`, `do`, `jaano`, `kaam`, `aap`, `ane`, `athva`, `hisaab`, `khaali`, `has`, `value`, `pedhi`, `bhadu`)
 - Perfect parser/interpreter parity across Python CLI and Javascript engine
+- **Chokha Hisaab (Immutable Ledgers)**: Secure append-only transactional ledgers with permanent audit trails (`hisaab`, `.jama()`, `.udhaar()`, `.itihas()`)
+- **Bina-Bhul (Failure-Proof Null Safety)**: Zero runtime null pointer exceptions via `khaali` literals and safe unboxing under `jo (x has value)` blocks
+- **Vyaapaari Concurrency (Pedhi Actors)**: Async message passing, non-blocking contracts (`sauda`), and blocking awaiters (`melvo`) on isolated concurrent thread instances (`pedhi`)
+- **Sharafat (Memory Ownership & Borrow Safety)**: Zero-copy safe memory allocations with default move-semantics and temporary borrows via the `bhadu` keyword
 - First-class function declarations (`kaam`) with nested lexical scopes and closures
 - Tail-call ready recursion support (e.g., Factorial sequences)
 - Dynamic array lists (`[...]`) with mutable index access (`list[idx] = val`)
@@ -137,6 +141,80 @@ sharu {
 | List Length      | `lambai(arr)`               | Returns total element count of the array         |
 | Function Declare | `kaam name(args) { }`       | Declares a reusable logic routine                |
 | Function Return  | `aap expr;`                 | Exits a function and returns an evaluated value  |
+| Ledger Declare   | `hisaab ledger = 1000;`     | Declares an append-only transaction ledger       |
+| Credit Ledger    | `ledger.jama(amount);`      | Credits ledger balance and logs in history       |
+| Debit Ledger     | `ledger.udhaar(amount);`     | Debits ledger balance and logs in history        |
+| Ledger History   | `ledger.itihas(index);`     | Retrieves historic ledger value at index         |
+| Null Literal     | `khaali`                    | Literal empty / null value                       |
+| Option Check     | `jo (x has value) { }`      | Safe unboxing check for Null-Safety (Bina-Bhul)  |
+| Actor Pedhi Def  | `pedhi Dukaan { ... }`      | Declares an isolated concurrent Actor structure  |
+| Spawn Actor      | `do partner = Dukaan.chalu();`| Spawns independent Actor thread state          |
+| Asynchronous Call| `partner.sauda("kaam", arg);`| Dispatches async call returning Sauda contract |
+| Await Actor Call | `deal.melvo();`             | Blocks and retrieves Sauda contract response     |
+| Memory Borrow    | `func(bhadu variable);`     | Borrows value ownership (Sharafat safety)        |
+
+---
+
+## Advanced System Paradigms (v3.0.0)
+
+KemLang v3.0.0 introduces four robust paradigms built into the core tokenization and evaluation layers:
+
+### 1. Chokha Hisaab (Immutable Ledgers)
+A ledger represents an append-only account balance. Once instantiated, its active balance can only change through explicit transactional increments or decrements. The interpreter maintains a strict history buffer tracking every ledger state change.
+```gcode
+sharu {
+  hisaab khata = 1000;
+  khata.jama(500);    // credit 500
+  khata.udhaar(200);  // debit 200
+  
+  do opening = khata.itihas(0); // 1000
+  do current = khata;           // 1300
+} samaapt
+```
+
+### 2. Bina-Bhul (Failure-Proof Null Safety)
+To prevent devastating runtime null reference exceptions, variables assigned to `khaali` are encapsulated in an unsafe wrapper. Any direct arithmetic or logic operation on unsafe `khaali` variables instantly raises a compile/eval error. Variables must be explicitly unboxed inside a safe `jo (x has value)` branch:
+```gcode
+sharu {
+  do status = khaali;
+  jo (status has value) {
+    do safe_access = status;
+    lakho("Value: " + safe_access);
+  } nahitar {
+    lakho("Variable is empty!");
+  }
+} samaapt
+```
+
+### 3. Vyaapaari Concurrency (Pedhi Actors)
+Actor-based message passing models concurrent systems cleanly without locks. Classes declared via `pedhi` are instantiated with `.chalu()`. They communicate through non-blocking transaction contracts called `sauda`, which are then awaited using blocking `.melvo()` routines:
+```gcode
+pedhi Dukaan {
+  kaam tolo(n) {
+    aap n * 2;
+  }
+}
+
+sharu {
+  do partner = Dukaan.chalu();
+  do deal = partner.sauda("tolo", 150);
+  do total = deal.melvo(); // blocks and retrieves 300
+} samaapt
+```
+
+### 4. Sharafat (Memory Ownership & Borrow Safety)
+Variables in KemLang enforce strict single-ownership semantics by default. Passing a variable as a function argument transfers its heap ownership ("move"), making the variable illegal to access in subsequent lines of the parent scope. To maintain parent-scope ownership, variables can be temporarily lent using the `bhadu` keyword:
+```gcode
+kaam be_gunu(n) {
+  aap n * 2;
+}
+
+sharu {
+  do mudal = 500;
+  do doubled = be_gunu(bhadu mudal); // Borrowed: mudal remains valid!
+  do final_val = be_gunu(mudal);      // Moved: mudal is now unusable!
+} samaapt
+```
 
 ---
 
