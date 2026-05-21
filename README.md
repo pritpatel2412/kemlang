@@ -31,14 +31,17 @@ KemLang addresses this directly. It maps core programming constructs to familiar
 
 ## Features
 
-- Gujarati keyword syntax (`sharu`, `samaapt`, `lakho`, `jo`, `nahitar`, `jyaare`, `do`, `jaano`)
-- Full interpreter pipeline: Lexical Analyzer, Recursive-Descent Parser, AST Evaluator
+- Gujarati keyword syntax (`sharu`, `samaapt`, `lakho`, `jo`, `nahitar`, `jyaare`, `do`, `jaano`, `kaam`, `aap`, `ane`, `athva`)
+- Perfect parser/interpreter parity across Python CLI and Javascript engine
+- First-class function declarations (`kaam`) with nested lexical scopes and closures
+- Tail-call ready recursion support (e.g., Factorial sequences)
+- Dynamic array lists (`[...]`) with mutable index access (`list[idx] = val`)
+- Modulo operator (`%`) and precedence-aware logical operators (`ane`, `athva`)
 - CLI support for executing `.kem` source files
-- Browser-based interactive sandbox with Monaco Editor integration
+- Browser-based interactive sandbox with Monaco Editor integration and live AST trees
 - FastAPI backend for remote code execution
 - KemGPT: an integrated AI assistant for language guidance and error explanation
-- Gujarati-localized runtime error messages
-- VS Code extension support
+- VS Code extension support with TextMate highlights and autocomplete snippets
 
 ---
 
@@ -81,6 +84,35 @@ Expected output:
 Kem cho KemLang
 ```
 
+### Advanced Usage (Recursive Factorial & Arrays)
+
+Here is a more advanced example showing custom recursive functions, boolean operators, lists, and modulo checks:
+
+```gcode
+kaam fact(n) {
+  jo (n <= 1) {
+    aap 1;
+  }
+  aap n * fact(n - 1);
+}
+
+sharu {
+  // Test modulo remainder
+  do rem = 10 % 3;
+  jo (rem == 1 ane kharu) {
+    lakho("Modulo check passes!");
+  }
+
+  // Create an array and mutate it
+  do list = [10, 20];
+  umedo(list, fact(4)); // Appends 24 to the list
+  list[0] = 50;         // Overwrites first index
+  
+  lakho("First element: " + list[0]);     // Output: 50
+  lakho("Total elements: " + lambai(list)); // Output: 3
+} samaapt
+```
+
 ---
 
 ## Language Reference
@@ -96,6 +128,15 @@ Kem cho KemLang
 | Loop             | `jyaare (x < 5) { }`        | While loop — executes while the condition holds  |
 | Boolean True     | `kharu`                     | Literal true                                     |
 | Boolean False    | `khotu`                     | Literal false                                    |
+| Logical AND      | `ane`                       | Boolean AND operator                             |
+| Logical OR       | `athva`                     | Boolean OR operator                              |
+| Modulo Remainder | `x % y`                     | Calculates division remainder                    |
+| Array Definition | `do arr = [10, 20];`        | Declares a dynamic sequence list (yadi)          |
+| Index Access     | `arr[0] = 5;`               | Assigns or retrieves list elements by 0-index    |
+| List Append      | `umedo(arr, 30);`           | Appends a value to the end of the array          |
+| List Length      | `lambai(arr)`               | Returns total element count of the array         |
+| Function Declare | `kaam name(args) { }`       | Declares a reusable logic routine                |
+| Function Return  | `aap expr;`                 | Exits a function and returns an evaluated value  |
 
 ---
 
